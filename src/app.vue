@@ -1,6 +1,10 @@
+<!-- src/app.vue -->
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
+  <NuxtLayout>
+    <NuxtLoadingIndicator />
+    <NuxtPage />
+    <ClientOnly>
+      <NuxtRouteAnnouncer />
+    </ClientOnly>
+  </NuxtLayout>
 </template>
