@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-dvh flex flex-col">
     <header class="border-b">
-      <AppHeader />
+      <LayoutAppHeader />
     </header>
 
     <main class="flex-1">
@@ -9,7 +9,7 @@
     </main>
 
     <footer class="border-t">
-      <AppFooter />
+      <LayoutAppFooter />
     </footer>
 
     <!-- モーダルなどのテレポート先 -->
@@ -18,6 +18,6 @@
 </template>
 
 <script setup lang="ts">
-import { AppHeader, AppFooter } from '#components'
+import { LayoutAppHeader, LayoutAppFooter } from '#components'
 
 </script>
