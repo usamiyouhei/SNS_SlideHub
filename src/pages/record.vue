@@ -1,12 +1,4 @@
 <template>
-   <header class="flex items-center justify-between px-6 py-4 bg-zinc-900 text-white">
-    <NuxtLink to="/" class="font-bold text-lg">SNSスライダー</NuxtLink>
-    <nav class="flex gap-4">
-      <NuxtLink to="/" class="hover:underline">Home</NuxtLink>
-      <NuxtLink to="/record" class="hover:underline">Record</NuxtLink>
-      <NuxtLink to="/settings" class="hover:underline">Settings</NuxtLink>
-    </nav>
-  </header>
 </template>
 
 <script setup lang="ts">
