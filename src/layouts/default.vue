@@ -21,3 +21,7 @@
 import { LayoutAppHeader, LayoutAppFooter } from '#components'
 
 </script>
+
+<style lang="sass" scoped>
+
+</style>

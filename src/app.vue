@@ -8,3 +8,7 @@
     </ClientOnly>
   </NuxtLayout>
 </template>
+
+<style lang="sass" scoped>
+
+</style>
