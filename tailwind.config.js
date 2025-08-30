@@ -1,12 +1,14 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    './components/**/*.{vue,js,ts}',
-    './layouts/**/*.vue',
-    './pages/**/*.vue',
     './app.vue',
+    './error.vue',
+    './components/**/*.{vue,js,ts}',
+    './layouts/**/*.{vue,js,ts}',
+    './pages/**/*.{vue,js,ts}',
     './plugins/**/*.{js,ts}',
+    './src/**/*.{vue,js,ts}', // ← srcDir を使うなら必ず入れる
   ],
   theme: { extend: {} },
   plugins: [],
-};
+}

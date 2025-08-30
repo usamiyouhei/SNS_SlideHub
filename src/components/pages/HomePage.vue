@@ -1,4 +1,19 @@
 <template>
+  <section class="p-6 md:p-8 space-y-6">
+   <div class="inline-flex rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700">
+    <button
+      class="px-4 py-2 text-sm"
+      >
+      教材モード
+    </button>
+    <button
+      class="px-4 py-2 text-sm"
+      >
+      ギャラリーモード
+    </button>
+   </div>
+   
+  </section>
 </template>
 
 <script setup lang="ts">
