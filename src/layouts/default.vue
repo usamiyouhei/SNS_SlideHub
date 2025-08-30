@@ -1,8 +1,6 @@
 <template>
   <div class="min-h-dvh flex flex-col">
-    <header class="border-b">
       <LayoutAppHeader />
-    </header>
 
     <main class="flex-1">
       <slot />

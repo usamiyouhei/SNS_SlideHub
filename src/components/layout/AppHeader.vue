@@ -1,10 +1,14 @@
 <template>
+  
    <header class="flex items-center justify-between px-6 py-4 bg-zinc-900 text-white">
     <NuxtLink to="/" class="font-bold text-lg">SNSスライダー</NuxtLink>
-    <nav class="flex gap-4">
+    <nav class="flex gap-4 ">
       <NuxtLink to="/" class="hover:underline">Home</NuxtLink>
       <NuxtLink to="/record" class="hover:underline">Record</NuxtLink>
       <NuxtLink to="/settings" class="hover:underline">Settings</NuxtLink>
+       <NuxtLink to="/record" class="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-500">
+        録画モードへ 🎥
+      </NuxtLink>
     </nav>
   </header>
 </template>
