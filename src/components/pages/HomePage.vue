@@ -33,6 +33,35 @@
         </SwiperSlide>
       </Swiper>
     </div>
+
+    <!-- right editer -->
+    <aside class="space-y-4">
+      <!-- add text -->
+       <div class="rounded-xl border p-4 space-y-2">
+        <h3 class="font-medium">テキストを追加</h3>
+        <textarea class="w-full rounded-lg border p-2" name="" id="" placeholder="ここに文章"></textarea>
+        <div>
+          <label class="text-sm" for="">文字サイズ</label>
+          <input type="text">
+          <span>textSize</span>
+          <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white">テキスト追加</button>
+        </div>
+       </div>
+
+       <!-- add image -->
+        <div class="rounded-xl border p-4 space-y-2">
+          <h3 class="font-medium">画像を追加</h3>
+          <input type="file" />
+          <div class="flex gap-2">
+            <input type="text" class="flex-1 rounded-lg border p-2" placeholder="画像を貼る">
+            <button 
+              class="px-3 py-2 rounded-lg bg-zinc-900 text-white">
+                画像追加
+            </button>
+          </div>
+        </div>
+
+    </aside>
    </div>
    
   </section>
