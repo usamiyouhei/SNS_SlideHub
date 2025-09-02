@@ -12,11 +12,37 @@
       ギャラリーモード
     </button>
    </div>
+
+   <div>
+    <div>
+      <Swiper>
+        <SwiperSlide>
+          <div>
+            <img src="" alt="">
+
+            <div>
+              text
+            </div>
+
+            <!-- フォールバック -->
+            <div>
+              empty
+            </div>
+          </div>
+
+        </SwiperSlide>
+      </Swiper>
+    </div>
+   </div>
    
   </section>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import "swiper/css";
+
 /**===================================================================================================================
  * 
  ===================================================================================================================**/
