@@ -1,6 +1,6 @@
 <template>
   <section class="p-6 md:p-8 space-y-6">
-   <div class="inline-flex rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700">
+   <div class="inline-flex rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 ">
     <button
       class="px-4 py-2 text-sm"
       >
@@ -13,19 +13,25 @@
     </button>
    </div>
 
-   <div>
-    <div>
-      <Swiper>
+   <div class="grid gap-6 md:grid-cols-[360px-auto] items-start">
+    <!-- スワイパー枠 -->
+    <div class="w-[360px] h-[540px] rounded-2xl overflow-hidden border bg-gray-500">
+      <Swiper class="w-full h-full">
         <SwiperSlide>
-          <div>
-            <img src="" alt="">
-
-            <div>
+          <div class="w-full h-full relative grid place-items-center breake-words">
+            <!-- 画像 -->
+            <img
+              src=""
+              alt=""
+              class="w-full h-hull absolute inset-0 object-cover"
+            >
+            <!-- テキスト -->
+            <div class="px-6 text-center break-words">
               text
             </div>
 
             <!-- フォールバック -->
-            <div>
+            <div class="opacity-60">
               empty
             </div>
           </div>
