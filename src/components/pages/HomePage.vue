@@ -1,6 +1,6 @@
 <template>
   <section class="p-6 md:p-8 space-y-6">
-   <div class="inline-flex rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 ">
+   <div class="flex rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 ">
     <button
       class="px-4 py-2 text-sm"
       >
@@ -46,7 +46,7 @@
        <div class="rounded-xl border p-4 space-y-2">
         <h3 class="font-medium">テキストを追加</h3>
         <textarea class="w-full rounded-lg border p-2" name="" id="" placeholder="ここに文章"></textarea>
-        <div>
+        <div class="rounded-xl border p-4 space-y-2">
           <label class="text-sm" for="">文字サイズ</label>
           <input type="text">
           <span>textSize</span>
@@ -81,7 +81,21 @@ import "swiper/css";
 /**===================================================================================================================
  * 
  ===================================================================================================================**/
-//------------------------------------------------------------------------------------------------------------
+type Mode = 'lesson' | 'gallery'
+const mode = ref<Mode>('lesson')
+
+type Slide = 
+|{  id: string;
+    type: 'text';
+    title: string;
+    fontsize:number;
+  }
+|{  id: string;
+    type: 'image';
+    src: string
+  }
+
+ //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
