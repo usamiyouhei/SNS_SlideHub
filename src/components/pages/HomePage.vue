@@ -17,23 +17,24 @@
       </button>
     </div>
 
-    <div class="grid gap-6 md:grid-cols-[360px-auto] items-start">
+    <div class="grid gap-6 md:grid-cols-[1fr_320px] items-start">
       <!-- スワイパー枠 -->
-      <div class="w-[360px] h-[540px] rounded-2xl overflow-hidden border bg-gray-500">
-        <Swiper class="w-full h-full">
+      <div class="w-full aspect-[9/16] max-h-[85vh] rounded-2xl overflow-hidden border bg-gray-300">
+        <Swiper :loop="true" class="w-full h-full">
           <SwiperSlide v-for="s in slides[mode]" :key="s.id">
-            <div class="w-full h-full relative grid place-items-center breake-words">
+            <div class="w-full h-full relative grid place-items-center break-words">
               <!-- 画像 -->
               <img
                 v-if="s.type === 'image'"
                 :src="s.src"
                 alt=""
-                class="w-full h-hull absolute inset-0 object-cover"
+                class="w-full h-full absolute inset-0 object-cover"
               >
               <!-- テキスト -->
-              <div 
+              <div
                 v-else-if="s.type === 'text'"
-                class="px-6 text-center break-words">
+                class="px-6 text-center break-words"
+                :style="{fontSize: s.fontSize + 'px'}">
                 {{ s.text }}
               </div>
 
@@ -52,12 +53,14 @@
         <!-- add text -->
         <div class="rounded-xl border p-4 space-y-2">
           <h3 class="font-medium">テキストを追加</h3>
-          <textarea class="w-full rounded-lg border p-2" name="" id="" placeholder="ここに文章"></textarea>
-          <div class="rounded-xl border p-4 space-y-2">
+          <textarea v-model="textInput" rows="3" class="w-full rounded-lg border p-2" name="" id="" placeholder="ここに文章"></textarea>
+          <div class="flex items-center gap-3 ">
             <label class="text-sm" for="">文字サイズ</label>
-            <input type="text">
-            <span>textSize</span>
-            <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white">テキスト追加</button>
+            <input type="range" min="16" max="48" v-model.number="textSize">
+            <span class="text-sm w-10 text-right">{{textSize}}</span>
+            <button 
+              class="px-3 py-2 rounded-lg bg-zinc-900 text-white"
+              @click="addText()">テキスト追加</button>
           </div>
         </div>
 
@@ -80,9 +83,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
+
 
 /**===================================================================================================================
  * 
@@ -94,7 +99,7 @@ type Slide =
 |{  id: string;
     type: 'text';
     text: string;
-    fontsize:number;
+    fontSize:number;
   }
 |{  id: string;
     type: 'image';
@@ -103,15 +108,31 @@ type Slide =
 
 const slides = reactive<Record<Mode, Slide[]>>({
   lesson: [
-    { id: 'l1', type: 'text', text: '単語: accomodation', fontsize: 28 },
-    { id: 'l2', type: 'image', src: '/img/photo.jpg' }
+    { id: 'l1', type: 'text', text: '単語: accomodation', fontSize: 28 },
+    { id: 'l2', type: 'image', src: '/img/photo1.jpeg' }
   ],
   gallery: [
-    { id: 'g1', type: 'image', src: '/img/photo.jpg'},
-    { id: 'g2', type: 'image', src: '/img/photo.jpg'},
+    { id: 'g1', type: 'image', src: '/img/photo2.jpeg'},
+    { id: 'g2', type: 'image', src: '/img/photo3.jpeg'},
   ]
 
 })
+
+// text add
+const textInput = ref('')
+const textSize = ref(28)
+function addText() {
+  if(!textInput.value.trim()) return
+  slides[mode.value].push({
+    id: `t-${Date.now()}`,
+    type: 'text',
+    text: textInput.value.trim(),
+    fontSize: textSize.value,
+  })
+  textInput.value = ''
+}
+
+
  //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
