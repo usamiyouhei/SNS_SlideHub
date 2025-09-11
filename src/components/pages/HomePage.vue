@@ -17,11 +17,26 @@
       </button>
     </div>
 
-    <div class="grid gap-6 md:grid-cols-[1fr_320px] items-start">
-      <!-- スワイパー枠 -->
-      <div class="w-full aspect-[9/16] max-h-[85vh] rounded-2xl overflow-hidden border bg-gray-300">
-        <Swiper :loop="true" class="w-full h-full">
-          <SwiperSlide v-for="s in slides[mode]" :key="s.id">
+    <div 
+      class="grid gap-6 md:grid-cols-[1fr_320px] items-start">
+      
+      <!-- 左の外部ナビ -->
+      
+      <!-- スワイパー枠 （録画部分）-->
+      <div 
+        class="w-full aspect-[9/16] max-h-[85vh] rounded-2xl overflow-hidden border bg-gray-300"
+        style="--swiper-navigation-color:#fff; --swiper-navigation-size:28px; --swiper-pagination-color:#fff;"
+      >
+        <Swiper
+          :modules="[Navigation, Pagination]"
+          :loop="true"
+          :navigation="true"
+          :pagination="{ clickable: true }"
+          class="w-full h-full main-swiper"
+          >
+          <SwiperSlide
+            v-for="s in slides[mode]"
+            :key="s.id">
             <div class="w-full h-full relative grid place-items-center break-words">
               <!-- 画像 -->
               <img
@@ -43,9 +58,15 @@
                 empty
               </div>
             </div>
-
           </SwiperSlide>
         </Swiper>
+      </div>
+
+      <!-- 右の外部ナビ -->
+       <div></div>
+
+      <div class="flex mt-3 justify-center">
+        <div ref="paginationEl" class="swiper-pagination"></div>
       </div>
 
       <!-- right editer -->
@@ -83,11 +104,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
-
+import 'swiper/css/pagination'
 
 /**===================================================================================================================
  * 
@@ -132,7 +153,10 @@ function addText() {
   textInput.value = ''
 }
 
+const paginationEl = ref<HTMLElement|null>(null)
+const pagination = reactive<any>({ el: null, clickable: true })
 
+onMounted(() => { pagination.el = paginationEl.value }) 
  //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
@@ -195,4 +219,12 @@ function onChange(value: any) {
 </script>
 
 <style lang="scss" scoped>
+.swiper-pagination-bullet { width:10px; height:10px; opacity:.6; }
+.swiper-pagination-bullet-active { opacity:1; }
+
+.main-swiper .swiper-pagination{
+  position: static !important;
+  margin-top: 12px;
+  text-align: center;
+}
 </style>
