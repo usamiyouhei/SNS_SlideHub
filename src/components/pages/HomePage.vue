@@ -17,21 +17,21 @@
       </button>
     </div>
 
-    <div 
-      class="grid gap-6 md:grid-cols-[1fr_320px] items-start">
-      
+    <div
+      class="grid gap-3 md:grid-cols-[48px_1fr_48px] items-center">
+
       <!-- 左の外部ナビ -->
-      
+      <button class="prev-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border">
+        ‹
+      </button>
       <!-- スワイパー枠 （録画部分）-->
       <div 
         class="w-full aspect-[9/16] max-h-[85vh] rounded-2xl overflow-hidden border bg-gray-300"
         style="--swiper-navigation-color:#fff; --swiper-navigation-size:28px; --swiper-pagination-color:#fff;"
       >
         <Swiper
-          :modules="[Navigation, Pagination]"
           :loop="true"
-          :navigation="true"
-          :pagination="{ clickable: true }"
+          @swiper="onSwiper"
           class="w-full h-full main-swiper"
           >
           <SwiperSlide
@@ -63,7 +63,10 @@
       </div>
 
       <!-- 右の外部ナビ -->
-       <div></div>
+        <button class="next-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border">
+          ›
+        </button>
+    </div>
 
       <div class="flex mt-3 justify-center">
         <div ref="paginationEl" class="swiper-pagination"></div>
@@ -99,16 +102,18 @@
           </div>
 
       </aside>
-    </div>
+    
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
-import 'swiper/css/pagination'
+// import { Pagination, Navigation } from "swiper/modules";
+// import 'swiper/css/pagination'
+// import 'swiper/css/navigation'
+
 
 /**===================================================================================================================
  * 
@@ -118,14 +123,14 @@ const mode = ref<Mode>('lesson')
 
 type Slide = 
 |{  id: string;
-    type: 'text';
-    text: string;
-    fontSize:number;
-  }
+  type: 'text';
+  text: string;
+  fontSize:number;
+}
 |{  id: string;
-    type: 'image';
-    src: string
-  }
+  type: 'image';
+  src: string
+}
 
 const slides = reactive<Record<Mode, Slide[]>>({
   lesson: [
@@ -136,7 +141,7 @@ const slides = reactive<Record<Mode, Slide[]>>({
     { id: 'g1', type: 'image', src: '/img/photo2.jpeg'},
     { id: 'g2', type: 'image', src: '/img/photo3.jpeg'},
   ]
-
+  
 })
 
 // text add
@@ -153,10 +158,35 @@ function addText() {
   textInput.value = ''
 }
 
-const paginationEl = ref<HTMLElement|null>(null)
-const pagination = reactive<any>({ el: null, clickable: true })
+// const paginationEl = ref<HTMLElement|null>(null)
+// const pagination = reactive<any>({ el: null, clickable: true })
 
-onMounted(() => { pagination.el = paginationEl.value }) 
+const swiperRef = ref<any | null>(null)
+const active = ref(0)
+
+function onSwiper(swiper: any) {
+  swiperRef.value = swiper
+  active.value = swiper.realIndex ?? swiper.activeIndex
+}
+
+function onSlideChange(swiper: any) {
+  active.value = swiper.realIndex ?? swiper.activeIndex
+}
+
+function prev() {
+  swiperRef.value?.slidePrev()
+}
+
+function next() {
+  swiperRef.value?.slideNext()
+}
+
+function go(i: number) {
+    // loop:true なので slideToLoop を使うのが簡単
+  swiperRef.value?.slideToLoop ? swiperRef.value.slideToLoop(i) : swiperRef.value?.slideToLoop(i)
+}
+
+// onMounted(() => { pagination.el = paginationEl.value }) 
  //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
@@ -222,9 +252,9 @@ function onChange(value: any) {
 .swiper-pagination-bullet { width:10px; height:10px; opacity:.6; }
 .swiper-pagination-bullet-active { opacity:1; }
 
-.main-swiper .swiper-pagination{
-  position: static !important;
-  margin-top: 12px;
-  text-align: center;
-}
+// .main-swiper .swiper-pagination{
+//   position: static !important;
+//   margin-top: 12px;
+//   text-align: center;
+// }
 </style>
