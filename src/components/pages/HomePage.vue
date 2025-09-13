@@ -18,10 +18,12 @@
     </div>
 
     <div
-      class="grid gap-3 md:grid-cols-[48px_1fr_48px] items-center">
+      class=" grid gap-10 md:grid-cols-[48px_1fr_48px] items-center">
 
       <!-- 左の外部ナビ -->
-      <button class="prev-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border">
+      <button 
+        class="prev-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border"
+        @click="prev">
         ‹
       </button>
       <!-- スワイパー枠 （録画部分）-->
@@ -63,19 +65,29 @@
       </div>
 
       <!-- 右の外部ナビ -->
-        <button class="next-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border">
+        <button 
+          class="next-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border"
+          @click="next"
+          >
           ›
         </button>
     </div>
 
-      <div class="flex mt-3 justify-center">
-        <div ref="paginationEl" class="swiper-pagination"></div>
+      <div class="flex mt-3 justify-center gap-2">
+        <button
+          v-for="(_, i) in slides[mode]"
+          :key="i"
+          @click="go(i)"
+          class="w-2.5 h-2.5 rounded-full transition"
+          :class="i===active ? 'bg-blue-500' : 'bg-zinc-400 opacity-60 hover:opacity-90' "
+          aria-label="Go to slide"
+          />
       </div>
 
       <!-- right editer -->
-      <aside class="space-y-4">
+      <aside class="mt-6 space-y-4">
         <!-- add text -->
-        <div class="rounded-xl border p-4 space-y-2">
+        <div class="rounded-xl border p-4 space-y-4">
           <h3 class="font-medium">テキストを追加</h3>
           <textarea v-model="textInput" rows="3" class="w-full rounded-lg border p-2" name="" id="" placeholder="ここに文章"></textarea>
           <div class="flex items-center gap-3 ">
@@ -91,11 +103,16 @@
         <!-- add image -->
           <div class="rounded-xl border p-4 space-y-2">
             <h3 class="font-medium">画像を追加</h3>
-            <input type="file" />
+            <input type="file" accept="image/*" @change="onPickImage"/>
             <div class="flex gap-2">
-              <input type="text" class="flex-1 rounded-lg border p-2" placeholder="画像を貼る">
+              <input 
+                v-model="imgUrl"
+                type="text" class="flex-1 rounded-lg border p-2" 
+                placeholder="画像を貼る"
+                >
               <button
-                class="px-3 py-2 rounded-lg bg-zinc-900 text-white">
+                class="px-3 py-2 rounded-lg bg-zinc-900 text-white"
+                @click="addImage()">
                   画像追加
               </button>
             </div>
@@ -156,6 +173,25 @@ function addText() {
     fontSize: textSize.value,
   })
   textInput.value = ''
+}
+
+// addImage
+const imgUrl = ref('')
+let pickedFileUrl: string | null = null
+
+function onPickImage(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if(!file) return
+  pickedFileUrl && URL.revokeObjectURL(pickedFileUrl)
+  pickedFileUrl = URL.createObjectURL(file)
+  imgUrl.value = pickedFileUrl
+}
+
+function addImage() {
+  const url = imgUrl.value.trim()
+  if(!url) return
+  slides[mode.value].push({ id: `i-${Date.now()}`, type: 'image', src: url})
+  imgUrl.value = ''
 }
 
 // const paginationEl = ref<HTMLElement|null>(null)
