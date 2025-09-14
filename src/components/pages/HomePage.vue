@@ -118,6 +118,19 @@
             </div>
           </div>
 
+          <!-- slide list -->
+           <div class="rounded-xl border p-a space-y-2">
+            <h3 class="text-medium">スライド一覧</h3>
+            <ul class="space-y-2 text-sm">
+              <li class="flex items-center justify-between">
+                <span>
+                  <span class="opacity-70"></span>
+                </span>
+                <button>削除</button>
+              </li>
+            </ul>
+           </div>
+
       </aside>
     
   </section>
@@ -220,6 +233,12 @@ function next() {
 function go(i: number) {
     // loop:true なので slideToLoop を使うのが簡単
   swiperRef.value?.slideToLoop ? swiperRef.value.slideToLoop(i) : swiperRef.value?.slideToLoop(i)
+}
+
+function removeSlide(id: string) {
+  const array = slides[mode.value]
+  const index = array.findIndex(s => s.id === id)
+  if(index >= 0) array.splice(index, 1)
 }
 
 // onMounted(() => { pagination.el = paginationEl.value }) 
