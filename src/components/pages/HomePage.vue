@@ -119,14 +119,15 @@
           </div>
 
           <!-- slide list -->
-           <div class="rounded-xl border p-a space-y-2">
+           <div class="rounded-xl border p-4 space-y-2">
             <h3 class="text-medium">スライド一覧</h3>
             <ul class="space-y-2 text-sm">
-              <li class="flex items-center justify-between">
+              <li v-for="s in slides[mode]" :key="s.id" class="flex items-center justify-between">
                 <span>
-                  <span class="opacity-70"></span>
+                  {{ s.type === 'text' ? 'Text' : 'Image' }}
+                  <span class="opacity-70">#{{ s.id.slice(-4) }}</span>
                 </span>
-                <button>削除</button>
+                <button class="text-red-600 hover:underline" @click="removeSlide(s.id)">削除</button>
               </li>
             </ul>
            </div>
@@ -248,55 +249,6 @@ function removeSlide(id: string) {
 //------------------------------------------------------------------------------------------------------------
 // 定数・変数（state）
 //------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------
-// ライフサイクル
-//------------------------------------------------------------------------------------------------------------
-/*
-onBeforeMount(() => {
-  //記憶した位置、サイズでの復帰を可能にする
-})
-
-onMounted(() => {
-  //window.addEventListener('resize', onGetPosition)
-})
-
-onBeforeUnmount(() => {
-  //window.removeEventListener('resize', onGetPosition)
-})
-*/
-//------------------------------------------------------------------------------------------------------------
-//watch
-//------------------------------------------------------------------------------------------------------------
-/*
-watch(
-  () => props.value,
-  (value) => {
-    input.value = value
-  }
-)
-//------------------------------------------------------------------------------------------------------------
-//computed
-//------------------------------------------------------------------------------------------------------------
-/*
-const counter: Ref<number> = useState('counter', () => 500)
-
-// computedによりcounter変数の監視が行われる
-const doubleCount = computed(() => {
-  return counter.value * 2
-})
-*/
-//------------------------------------------------------------------------------------------------------------
-// エミット
-//------------------------------------------------------------------------------------------------------------
-/*
-const emits = defineEmits<{ (e: 'update:value', item: any): void }>()
-const input = ref(props.value)
-
-function onChange(value: any) {
-  input.value = value
-  emits('update:value', value)
-}
-*/
 
 //------------------------------------------------------------------------------------------------------------
 // メソッド
@@ -307,9 +259,5 @@ function onChange(value: any) {
 .swiper-pagination-bullet { width:10px; height:10px; opacity:.6; }
 .swiper-pagination-bullet-active { opacity:1; }
 
-// .main-swiper .swiper-pagination{
-//   position: static !important;
-//   margin-top: 12px;
-//   text-align: center;
-// }
+
 </style>
