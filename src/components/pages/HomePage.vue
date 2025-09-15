@@ -34,6 +34,7 @@
         <Swiper
           :loop="true"
           @swiper="onSwiper"
+          @slideChange="onSlideChange"
           class="w-full h-full main-swiper"
           >
           <SwiperSlide
@@ -157,6 +158,9 @@ type Slide =
   type: 'text';
   text: string;
   fontSize:number;
+  bg?: string;
+  color?: string;
+  editing?: boolean;
 }
 |{  id: string;
   type: 'image';
@@ -241,6 +245,8 @@ function removeSlide(id: string) {
   const index = array.findIndex(s => s.id === id)
   if(index >= 0) array.splice(index, 1)
 }
+
+
 
 // onMounted(() => { pagination.el = paginationEl.value }) 
  //------------------------------------------------------------------------------------------------------------
