@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-// import { useRecorder } from '@/composables/useRecorder';
-const props = defineProps<{ targetEl?: HTMLElement | null }>();
-const { isRec, startRecording, stopRecording, withMic } = useRecorder();
-const start = () => startRecording({ targetEl: props.targetEl });
-const stop  = () => stopRecording();
+// // import { useRecorder } from '@/composables/useRecorder';
+// const props = defineProps<{ targetEl?: HTMLElement | null }>();
+// // const { isRec, startRecording, stopRecording, withMic } = useRecorder();
+// const start = () => startRecording({ targetEl: props.targetEl });
+// const stop  = () => stopRecording();
 </script>
 
 <style scoped>
