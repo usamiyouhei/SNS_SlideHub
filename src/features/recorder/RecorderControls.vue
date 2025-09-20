@@ -1,10 +1,10 @@
 <template>
   <div class="flex gap-2">
-    <button class="btn" :disabled="isRec" @click="start">録画</button>
+    <!-- <button class="btn" :disabled="isRec" @click="start">録画</button>
     <button class="btn" :disabled="!isRec" @click="stop">停止</button>
     <label class="flex items-center gap-1 text-sm">
       <input type="checkbox" v-model="withMic" />マイク
-    </label>
+    </label> -->
   </div>
 </template>
 
