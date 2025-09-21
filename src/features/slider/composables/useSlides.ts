@@ -17,3 +17,43 @@ export const slides = reactive<SlideState>({
   
 })
 
+export function addText(text: string, size: number){
+  if(!text.trim()) return
+  slides[mode.value].push({
+    id:`t-{Date.now()}`,
+    type: 'text',
+    text: text.trim(),
+    fontSize: size,
+    bg:'#fff',
+    color: '#222'
+  })
+}
+
+export function addImage(url: string) {
+  if(!url.trim()) return
+  slides[mode.value].push({
+    id:`i-{Date.now()}`,
+    type:'image',
+    src: url.trim()
+  })
+}
+
+// i = インデックス番号（0, 1, 2 …）
+// 	s = その配列の要素（Slide オブジェクト）
+export function removeSlide(id: string) {
+  const arr = slides[mode.value] // 今のモード (lesson / gallery) のスライド配列
+  const i = arr.findIndex(s => s.id === id) // s は Slide (text か image)
+  if(i >= 0 ) arr.splice(i, 1) // 見つかった位置を削除
+}
+
+export function setSelectedByIndex(i: number) {
+  activeIndex.value = i
+  const s = slides[mode.value][i] // i 番目の Slide
+  selectedId.value = s?.id ?? null // その Slide の id を記録
+}
+
+// selectedId に一致するスライドを返す。なければ null。
+export function getSelected(): Slide | null {
+  const arr = slides[mode.value]
+  return arr.find(s => s.id === selectedId.value) ?? null
+}
