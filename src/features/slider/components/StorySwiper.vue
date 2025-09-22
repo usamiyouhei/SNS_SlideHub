@@ -15,7 +15,9 @@
           @slideChange="onSlideChange"
           >
           <SwiperSlide
-            v-for="(s, i) in slides[mode]">
+            v-for="(s, i) in slides[mode]"
+            :key="s.id"
+            @click="select(i)">
             <div class="w-full h-full grid place-items-center"
                 :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined">
               <img v-if="s.type === 'image'" src="" alt="" class="w-full h-full absolute inset-0 object-cover">
@@ -45,66 +47,35 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
-import { mode, selectedId, slides } from '../composables/useSlides';
+import { mode, selectedId, setSelectedByIndex, slides } from '../composables/useSlides';
 
 /**===================================================================================================================
  * 
  ===================================================================================================================**/
-//------------------------------------------------------------------------------------------------------------
+const swiperRef = ref<any | null>(null);
+
+function onSwiper(sw: any) {
+  swiperRef.value = sw
+  setSelectedByIndex(sw.realIndex ?? sw.activeIndex ?? 0)
+}
+
+function onSlideChange(sw: any) {
+  setSelectedByIndex(sw.realIndex ?? sw.activeIndex ?? 0)
+}
+
+function prev() {
+  swiperRef.value?.slidePrev()
+}
+
+function next() {
+  swiperRef.value?.slideNext()
+}
+ //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 // 定数・変数（state）
 //------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------
-// ライフサイクル
-//------------------------------------------------------------------------------------------------------------
-/*
-onBeforeMount(() => {
-  //記憶した位置、サイズでの復帰を可能にする
-})
-
-onMounted(() => {
-  //window.addEventListener('resize', onGetPosition)
-})
-
-onBeforeUnmount(() => {
-  //window.removeEventListener('resize', onGetPosition)
-})
-*/
-//------------------------------------------------------------------------------------------------------------
-//watch
-//------------------------------------------------------------------------------------------------------------
-/*
-watch(
-  () => props.value,
-  (value) => {
-    input.value = value
-  }
-)
-//------------------------------------------------------------------------------------------------------------
-//computed
-//------------------------------------------------------------------------------------------------------------
-/*
-const counter: Ref<number> = useState('counter', () => 500)
-
-// computedによりcounter変数の監視が行われる
-const doubleCount = computed(() => {
-  return counter.value * 2
-})
-*/
-//------------------------------------------------------------------------------------------------------------
-// エミット
-//------------------------------------------------------------------------------------------------------------
-/*
-const emits = defineEmits<{ (e: 'update:value', item: any): void }>()
-const input = ref(props.value)
-
-function onChange(value: any) {
-  input.value = value
-  emits('update:value', value)
-}
-*/
 
 //------------------------------------------------------------------------------------------------------------
 // メソッド
