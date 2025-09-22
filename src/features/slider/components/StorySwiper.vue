@@ -1,7 +1,7 @@
 <template>
   <div class="grid gap-10 md:grid-cols-[48px_1fr_48px] items-center">
     <!-- 右ナビ -->
-    <button class="prev-btn hidden md:flex items-center w-12 h-12 rounded-full border"
+    <button class="prev-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border"
       @click="prev"
     >‹</button>
 
@@ -22,7 +22,7 @@
             @click="select(i)">
             <div class="w-full h-full grid place-items-center"
                 :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined">
-              <img v-if="s.type === 'image'" src="" alt="" class="w-full h-full absolute inset-0 object-cover">
+              <img v-if="s.type === 'image'" :src="s.src" alt="" class="w-full h-full absolute inset-0 object-cover">
               <div v-else 
                 class="px-6 text-center break-words"
                 :style="{ fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}">
@@ -37,7 +37,7 @@
       </div>
 
       <!-- 左ナビ -->
-    <button class="next-btn hidden md:flex items-center w-12 h-12 rounded-full border"
+    <button class="next-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border"
       @click="next"
     >›
     </button>
