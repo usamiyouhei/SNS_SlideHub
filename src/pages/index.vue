@@ -18,6 +18,8 @@
     </div>
 
     <StorySwiper/>
+
+    <SlideEditor @remove="removeSlide"/>
     <!-- <div
       class=" grid gap-10 md:grid-cols-[48px_1fr_48px] items-center"> -->
 
@@ -148,107 +150,108 @@ import { Pagination, Navigation } from "swiper/modules";
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import StorySwiper from '@/features/slider/components/StorySwiper.vue'
-
-
+import SlideEditor from '~/features/slider/components/SlideEditor.vue';
+import { mode } from '~/features/slider/composables/useSlides';
+import { removeSlide } from '~/features/slider/composables/useSlides';
 /**===================================================================================================================
  * 
  ===================================================================================================================**/
-type Mode = 'lesson' | 'gallery'
-// type Slide = SlideText | SlideImage
-const mode = ref<Mode>('lesson')
+// type Mode = 'lesson' | 'gallery'
+// // type Slide = SlideText | SlideImage
+// const mode = ref<Mode>('lesson')
 
-type Slide = 
-|{  id: string;
-  type: 'text';
-  text: string;
-  fontSize:number;
-  bg?: string;
-  color?: string;
-  editing?: boolean;
-}
-|{  id: string;
-  type: 'image';
-  src: string
-}
+// type Slide = 
+// |{  id: string;
+//   type: 'text';
+//   text: string;
+//   fontSize:number;
+//   bg?: string;
+//   color?: string;
+//   editing?: boolean;
+// }
+// |{  id: string;
+//   type: 'image';
+//   src: string
+// }
 
-const slides = reactive<Record<Mode, Slide[]>>({
-  lesson: [
-    { id: 'l1', type: 'text', text: '単語: accomodation', fontSize: 28 },
-    { id: 'l2', type: 'image', src: '/img/photo1.jpeg' }
-  ],
-  gallery: [
-    { id: 'g1', type: 'image', src: '/img/photo2.jpeg'},
-    { id: 'g2', type: 'image', src: '/img/photo3.jpeg'},
-  ]
+// const slides = reactive<Record<Mode, Slide[]>>({
+//   lesson: [
+//     { id: 'l1', type: 'text', text: '単語: accomodation', fontSize: 28 },
+//     { id: 'l2', type: 'image', src: '/img/photo1.jpeg' }
+//   ],
+//   gallery: [
+//     { id: 'g1', type: 'image', src: '/img/photo2.jpeg'},
+//     { id: 'g2', type: 'image', src: '/img/photo3.jpeg'},
+//   ]
   
-})
+// })
 
-// text add
-const textInput = ref('')
-const textSize = ref(28)
-function addText() {
-  if(!textInput.value.trim()) return
-  slides[mode.value].push({
-    id: `t-${Date.now()}`,
-    type: 'text',
-    text: textInput.value.trim(),
-    fontSize: textSize.value,
-  })
-  textInput.value = ''
-}
+// // text add
+// const textInput = ref('')
+// const textSize = ref(28)
+// function addText() {
+//   if(!textInput.value.trim()) return
+//   slides[mode.value].push({
+//     id: `t-${Date.now()}`,
+//     type: 'text',
+//     text: textInput.value.trim(),
+//     fontSize: textSize.value,
+//   })
+//   textInput.value = ''
+// }
 
-// addImage
-const imgUrl = ref('')
-let pickedFileUrl: string | null = null
+// // addImage
+// const imgUrl = ref('')
+// let pickedFileUrl: string | null = null
 
-function onPickImage(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if(!file) return
-  pickedFileUrl && URL.revokeObjectURL(pickedFileUrl)
-  pickedFileUrl = URL.createObjectURL(file)
-  imgUrl.value = pickedFileUrl
-}
+// function onPickImage(e: Event) {
+//   const file = (e.target as HTMLInputElement).files?.[0]
+//   if(!file) return
+//   pickedFileUrl && URL.revokeObjectURL(pickedFileUrl)
+//   pickedFileUrl = URL.createObjectURL(file)
+//   imgUrl.value = pickedFileUrl
+// }
 
-function addImage() {
-  const url = imgUrl.value.trim()
-  if(!url) return
-  slides[mode.value].push({ id: `i-${Date.now()}`, type: 'image', src: url})
-  imgUrl.value = ''
-}
+// function addImage() {
+//   const url = imgUrl.value.trim()
+//   if(!url) return
+//   slides[mode.value].push({ id: `i-${Date.now()}`, type: 'image', src: url})
+//   imgUrl.value = ''
+// }
 
-// const paginationEl = ref<HTMLElement|null>(null)
-// const pagination = reactive<any>({ el: null, clickable: true })
+// // const paginationEl = ref<HTMLElement|null>(null)
+// // const pagination = reactive<any>({ el: null, clickable: true })
 
-const swiperRef = ref<any | null>(null)
-const active = ref(0)
+// const swiperRef = ref<any | null>(null)
+// const active = ref(0)
 
-function onSwiper(swiper: any) {
-  swiperRef.value = swiper
-  active.value = swiper.realIndex ?? swiper.activeIndex
-}
+// function onSwiper(swiper: any) {
+//   swiperRef.value = swiper
+//   active.value = swiper.realIndex ?? swiper.activeIndex
+// }
 
-function onSlideChange(swiper: any) {
-  active.value = swiper.realIndex ?? swiper.activeIndex
-}
+// function onSlideChange(swiper: any) {
+//   active.value = swiper.realIndex ?? swiper.activeIndex
+// }
 
-function prev() {
-  swiperRef.value?.slidePrev()
-}
+// function prev() {
+//   swiperRef.value?.slidePrev()
+// }
 
-function next() {
-  swiperRef.value?.slideNext()
-}
+// function next() {
+//   swiperRef.value?.slideNext()
+// }
 
-function go(i: number) {
-    // loop:true なので slideToLoop を使うのが簡単
-  swiperRef.value?.slideToLoop ? swiperRef.value.slideToLoop(i) : swiperRef.value?.slideToLoop(i)
-}
+// function go(i: number) {
+//     // loop:true なので slideToLoop を使うのが簡単
+//   swiperRef.value?.slideToLoop ? swiperRef.value.slideToLoop(i) : swiperRef.value?.slideToLoop(i)
+// }
 
-function removeSlide(id: string) {
-  const array = slides[mode.value]
-  const index = array.findIndex(s => s.id === id)
-  if(index >= 0) array.splice(index, 1)
-}
+// function removeSlide(id: string) {
+//   const array = slides[mode.value]
+//   const index = array.findIndex(s => s.id === id)
+//   if(index >= 0) array.splice(index, 1)
+// }
 
 
 
