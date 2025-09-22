@@ -17,17 +17,18 @@
       </button>
     </div>
 
-    <div
-      class=" grid gap-10 md:grid-cols-[48px_1fr_48px] items-center">
+    <StorySwiper/>
+    <!-- <div
+      class=" grid gap-10 md:grid-cols-[48px_1fr_48px] items-center"> -->
 
       <!-- 左の外部ナビ -->
-      <button 
+      <!-- <button 
         class="prev-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border"
         @click="prev">
         ‹
-      </button>
+      </button> -->
       <!-- スワイパー枠 （録画部分）-->
-      <div 
+      <!-- <div 
         class="w-full aspect-[9/16] max-h-[85vh] rounded-2xl overflow-hidden border bg-gray-300"
         style="--swiper-navigation-color:#fff; --swiper-navigation-size:28px; --swiper-pagination-color:#fff;"
       >
@@ -41,33 +42,33 @@
             v-for="s in slides[mode]"
             :key="s.id">
             <div class="w-full h-full relative grid place-items-center break-words"
-              :style="s.type === 'text' ? { background: s.bg || '#222' }: undefined">
+              :style="s.type === 'text' ? { background: s.bg || '#222' }: undefined"> -->
               <!-- 画像 -->
-              <img
+              <!-- <img
                 v-if="s.type === 'image'"
                 :src="s.src"
                 alt=""
                 class="w-full h-full absolute inset-0 object-cover"
-              >
+              > -->
               <!-- テキスト -->
-              <div
+              <!-- <div
                 v-else-if="s.type === 'text'"
                 class="px-6 text-center break-words"
                 :style="{fontSize: s.fontSize + 'px'}">
                 {{ s.text }}
-              </div>
+              </div> -->
 
               <!-- フォールバック -->
-              <div v-else class="opacity-60">
+              <!-- <div v-else class="opacity-60">
                 empty
               </div>
             </div>
           </SwiperSlide>
         </Swiper>
-      </div>
+      </div> -->
 
       <!-- 右の外部ナビ -->
-        <button 
+        <!-- <button 
           class="next-btn hidden md:flex items-center justify-center w-12 h-12 rounded-full border"
           @click="next"
           >
@@ -84,12 +85,12 @@
           :class="i===active ? 'bg-blue-500' : 'bg-zinc-400 opacity-60 hover:opacity-90' "
           aria-label="Go to slide"
           />
-      </div>
+      </div> -->
 
       <!-- right editer -->
-      <aside class="mt-6 space-y-4">
+      <!-- <aside class="mt-6 space-y-4"> -->
         <!-- add text -->
-        <div class="rounded-xl border p-4 space-y-4">
+        <!-- <div class="rounded-xl border p-4 space-y-4">
           <h3 class="font-medium">テキストを追加</h3>
           <textarea v-model="textInput" rows="3" class="w-full rounded-lg border p-2" name="" id="" placeholder="ここに文章"></textarea>
           <div class="flex items-center gap-3 ">
@@ -100,10 +101,10 @@
               class="px-3 py-2 rounded-lg bg-zinc-900 text-white"
               @click="addText()">テキスト追加</button>
           </div>
-        </div>
+        </div> -->
 
         <!-- add image -->
-          <div class="rounded-xl border p-4 space-y-2">
+          <!-- <div class="rounded-xl border p-4 space-y-2">
             <h3 class="font-medium">画像を追加</h3>
             <input type="file" accept="image/*" @change="onPickImage"/>
             <div class="flex gap-2">
@@ -118,10 +119,10 @@
                   画像追加
               </button>
             </div>
-          </div>
+          </div> -->
 
           <!-- slide list -->
-           <div class="rounded-xl border p-4 space-y-2">
+           <!-- <div class="rounded-xl border p-4 space-y-2">
             <h3 class="text-medium">スライド一覧</h3>
             <ul class="space-y-2 text-sm">
               <li v-for="s in slides[mode]" :key="s.id" class="flex items-center justify-between">
@@ -134,7 +135,7 @@
             </ul>
            </div>
 
-      </aside>
+      </aside> -->
     
   </section>
 </template>
@@ -146,6 +147,7 @@ import "swiper/css";
 import { Pagination, Navigation } from "swiper/modules";
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
+import StorySwiper from '@/features/slider/components/StorySwiper.vue'
 
 
 /**===================================================================================================================
