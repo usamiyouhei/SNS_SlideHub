@@ -9,9 +9,23 @@
     </div>
 
     <!-- Slide Text -->
-     <div class="rounded-xl border p-4 space-y-4">
+    <div v-if="slide" class="rounded-xl border p-4 space-y-4">
       <h4 class="font-medium">テキスト</h4>
-     </div>
+        <textarea v-model="slide.text" rows="3" class="w-full rounded-lg border p-2" placeholder="ここに文章を入力"></textarea>
+          <!--  -->
+        <div class="flex items-center gap-4">
+          <label class="text-sm">文字サイズ</label>
+          <input type="range" min="16" max="60" v-model.number="slide.fontSize">
+          <span class="text-sm w-10 text-right">{{ slide.fontSize }}</span>
+        </div>
+
+      <div class="flex items-center gap-4">
+        <label class="text-sm">文字色</label>
+        <input type="color" class="" v-model="slide.color">
+        <label class="text-sm">背景</label>
+        <input type="color" v-model="slide.bg">
+      </div>
+    </div>
 
   </aside>
 </template>
@@ -25,6 +39,7 @@ import type { SlideText } from '../types';
  ===================================================================================================================**/
 const emit = defineEmits<{ remove: [id: string] }>()
 const slide = computed(() => getSelected() as SlideText | null)
+
 
  //------------------------------------------------------------------------------------------------------------
 // 引数
