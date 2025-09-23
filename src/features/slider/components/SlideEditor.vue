@@ -28,11 +28,36 @@
     </div>
 
     <!-- Image Slide -->
-    <div v-if="current && current.type === 'image'" class="rounded-xl border p-4 space-y-4">
+    <div v-if="imageSlide" class="rounded-xl border p-4 space-y-4">
       <h4 class="font-medium">画像</h4>
-      <input v-model="imageUrl"  type="text" class="w-full rounded-lg border p-2">
+      <input v-model="imageSlide.src"  type="text" class="w-full rounded-lg border p-2" placeholder="画像URL">
 
+      <div v-if="imageUrl" class="rounded-lg border overflow-hidden">
+        <img :src="imageUrl" alt="preview" class="max-w-full">
+      </div>
+
+      <div class="flex gap-2">
+        <input type="file" accept="image/*" @change="onPick">
+        <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="applyImage" >差し替え</button>
+      </div>
     </div>
+
+    <!-- 共通削除 -->
+    <div v-if="current" class="rounded-xl border p-4">
+      <button class="text-red-600 hover:underline" @click="$emit('remove', current.id)">削除する</button>
+    </div>
+
+      <!-- 追加機能 -->
+      <div class="rounded-xl border p-4 space-y-4">
+        <h4 class="font-medium">新規追加</h4>
+
+        <div class="space-y-3">
+          <textarea v-model="newText" rows="2" class="w-full rounded-lg border p-2" placeholder="新しいテキスト"></textarea>
+          <div class="flex items-center gap-3">
+            <label class="text-sm">文字サイズ</label>
+          </div>
+        </div>
+      </div>
 
   </aside>
 </template>
@@ -40,7 +65,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { getSelected, addText, addImage  } from '../composables/useSlides';
-import type { Slide, SlideText } from '../types';
+import type { Slide, SlideImage, SlideText } from '../types';
 /**===================================================================================================================
  * 
  ===================================================================================================================**/
@@ -52,7 +77,31 @@ const current = computed<Slide | null>(() => getSelected())
 // テキストスライドに絞ったビュー（text 以外は null）
 const textSlide = computed<SlideText | null>(() => current.value?.type === 'text' ? current.value : null)
 
+const imageSlide = computed<SlideImage | null>(() => current.value?.type === 'image' ? current.value : null)
+// image編集用
+const imageUrl = ref('')
+let pickedObjectUrl: string | null = null
 
+function onPick(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if(!file) return
+  if(pickedObjectUrl) URL.revokeObjectURL(pickedObjectUrl)
+  pickedObjectUrl = URL.createObjectURL(file)
+  imageUrl.value = pickedObjectUrl
+}
+
+function applyImage() {
+  if(!imageSlide.value) return
+  const url = imageUrl.value.trim()
+  if(!url) return
+  imageSlide.value.src = url;
+  imageUrl.value = ''
+}
+
+// 新規追加
+const newText = ref('');
+const newSize = ref(28);
+const newImageUrl = ref('')
  //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
