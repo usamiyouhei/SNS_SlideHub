@@ -37,8 +37,8 @@
       </div>
 
       <div class="flex gap-2">
-        <input id="new-file" type="file" accept="image/*" @change="onPick">
-        <label for="new-file" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-100 active:scale-[0.99]">ファイルを選択</label>
+        <input id="file-edit" type="file" accept="image/*" class="sr-only" @change="onPick">
+        <label for="file-edit" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-100 active:scale-[0.99]">ファイルを選択</label>
         <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="applyImage" >差し替え</button>
       </div>
     </div>
@@ -64,11 +64,15 @@
 
         <div class="space-y-2">
           <input v-model="newImageUrl" type="text" class="w-full rounded-lg border py-2" placeholder="画像URL">
-          <input id="new-file" type="file" accept="image/*" @change="onPickNew">
+          <input id="file-new" type="file" accept="image/*" class="sr-only" @change="onPickNew">
           <label for="file-new" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-50 active:scale-[0.99]">
             ファイルを選択
           </label>
           <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="onAddImage">画像を追加</button>
+        </div>
+
+        <div v-if="newPickedUrl" class="rounded-lg border overflow-hidden">
+          <img :src="newPickedUrl" alt="preview-new" class="max-w-full">
         </div>
       </div>
 
@@ -93,23 +97,18 @@ const textSlide = computed<SlideText | null>(() => current.value?.type === 'text
 const imageSlide = computed<SlideImage | null>(() => current.value?.type === 'image' ? current.value : null)
 // image編集用
 const imageUrl = ref('')
+let pickedObjectUrl: string | null = null
 const newPickedUrl = ref('')
 let newPickedObjectUrl: string | null = null
 
-// function onPick(e: Event) {
-//   const file = (e.target as HTMLInputElement).files?.[0]
-//   if(!file) return
-//   if(pickedObjectUrl) URL.revokeObjectURL(pickedObjectUrl)
-//   pickedObjectUrl = URL.createObjectURL(file)
-//   imageUrl.value = pickedObjectUrl
-// }
-function onPickNew(e: Event) {
+function onPick(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if(!file) return
-  if(newPickedObjectUrl) URL.revokeObjectURL(newPickedObjectUrl)
-  newPickedObjectUrl = URL.createObjectURL(file)
-  imageUrl.value = newPickedObjectUrl
+  if(pickedObjectUrl) URL.revokeObjectURL(pickedObjectUrl)
+  pickedObjectUrl = URL.createObjectURL(file)
+  imageUrl.value = pickedObjectUrl
 }
+
 
 function applyImage() {
   if(!imageSlide.value) return
@@ -117,6 +116,10 @@ function applyImage() {
   if(!url) return
   imageSlide.value.src = url;
   imageUrl.value = ''
+  if(pickedObjectUrl) {
+    URL.revokeObjectURL(pickedObjectUrl)
+    pickedObjectUrl = null
+  }
 }
 
 // 新規追加
@@ -128,8 +131,24 @@ function onAddText() {
   newText.value = ''
 }
 function onAddImage() {
-  addImage(newImageUrl.value)
+  const src = ( newPickedUrl.value || newImageUrl.value ).trim()
+  if(!src) return
+  addImage(src)
+
+  if(newPickedObjectUrl) {
+    URL.revokeObjectURL(newPickedObjectUrl)
+    newPickedObjectUrl = null
+  }
+  newPickedUrl.value = ''
   newImageUrl.value = ''
+}
+
+function onPickNew(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if(!file) return
+  if(newPickedObjectUrl) URL.revokeObjectURL(newPickedObjectUrl)
+  newPickedObjectUrl = URL.createObjectURL(file)
+  newPickedUrl.value = newPickedObjectUrl
 }
  //------------------------------------------------------------------------------------------------------------
 // 引数
