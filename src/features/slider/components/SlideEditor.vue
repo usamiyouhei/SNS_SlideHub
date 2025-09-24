@@ -37,7 +37,8 @@
       </div>
 
       <div class="flex gap-2">
-        <input type="file" accept="image/*" @change="onPick">
+        <input id="new-file" type="file" accept="image/*" @change="onPick">
+        <label for="new-file" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-100 active:scale-[0.99]">ファイルを選択</label>
         <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="applyImage" >差し替え</button>
       </div>
     </div>
@@ -55,7 +56,20 @@
           <textarea v-model="newText" rows="2" class="w-full rounded-lg border p-2" placeholder="新しいテキスト"></textarea>
           <div class="flex items-center gap-3">
             <label class="text-sm">文字サイズ</label>
+            <input type="range" min="16" max="60" v-model.number="newSize" >
+            <span class="text-sm w-10 text-right">{{ newSize }}</span>
+            <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="onAddText">テキスト追加</button>
           </div>
+        </div>
+
+        <div class="space-y-2">
+          <input v-model="newImageUrl" type="text" class="w-full rounded-lg border py-2" placeholder="画像URL">
+          <input id="new-file" type="file" accept="image/*" @change="onPick">
+
+          <label for="file-new" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-50 active:scale-[0.99]">
+            ファイルを選択
+          </label>
+          <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="onAddImage">画像を追加</button>
         </div>
       </div>
 
@@ -102,6 +116,14 @@ function applyImage() {
 const newText = ref('');
 const newSize = ref(28);
 const newImageUrl = ref('')
+function onAddText() {
+  addText(newText.value , newSize.value)
+  newText.value = ''
+}
+function onAddImage() {
+  addImage(newImageUrl.value)
+  newImageUrl.value = ''
+}
  //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
