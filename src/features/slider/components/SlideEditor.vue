@@ -64,8 +64,7 @@
 
         <div class="space-y-2">
           <input v-model="newImageUrl" type="text" class="w-full rounded-lg border py-2" placeholder="画像URL">
-          <input id="new-file" type="file" accept="image/*" @change="onPick">
-
+          <input id="new-file" type="file" accept="image/*" @change="onPickNew">
           <label for="file-new" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-50 active:scale-[0.99]">
             ファイルを選択
           </label>
@@ -94,14 +93,22 @@ const textSlide = computed<SlideText | null>(() => current.value?.type === 'text
 const imageSlide = computed<SlideImage | null>(() => current.value?.type === 'image' ? current.value : null)
 // image編集用
 const imageUrl = ref('')
-let pickedObjectUrl: string | null = null
+const newPickedUrl = ref('')
+let newPickedObjectUrl: string | null = null
 
-function onPick(e: Event) {
+// function onPick(e: Event) {
+//   const file = (e.target as HTMLInputElement).files?.[0]
+//   if(!file) return
+//   if(pickedObjectUrl) URL.revokeObjectURL(pickedObjectUrl)
+//   pickedObjectUrl = URL.createObjectURL(file)
+//   imageUrl.value = pickedObjectUrl
+// }
+function onPickNew(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if(!file) return
-  if(pickedObjectUrl) URL.revokeObjectURL(pickedObjectUrl)
-  pickedObjectUrl = URL.createObjectURL(file)
-  imageUrl.value = pickedObjectUrl
+  if(newPickedObjectUrl) URL.revokeObjectURL(newPickedObjectUrl)
+  newPickedObjectUrl = URL.createObjectURL(file)
+  imageUrl.value = newPickedObjectUrl
 }
 
 function applyImage() {
