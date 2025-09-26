@@ -12,14 +12,22 @@
         <Swiper
           :modules="[Navigation,Pagination]"
           :loop="true"
+          :preventClicks="false"
+          :preventClicksPropagation="false"
+          :slideToClickedSlide="true"
+          :arrowTouchMove="!isEditing"
+          :noSwiping="true"
+          :noSwipingClass="'no-swiping-class'"
           class="w-full h-full"
           @swiper="onSwiper"
           @slideChange="onSlideChange"
+          @click="onSwiperClick"
           >
           <SwiperSlide
             v-for="(s, i) in slides[mode]"
             :key="s.id"
-            @click="select(i)">
+            @click="onSlideBodyClick(i, s)"
+          >
             <div class="w-full h-full grid place-items-center"
                 :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined">
               <img v-if="s.type === 'image'" :src="s.src" alt="" class="w-full h-full absolute inset-0 object-cover">
@@ -59,17 +67,66 @@
 
 <script setup lang="ts">
 import { Navigation, Pagination } from 'swiper/modules';
-import { ref } from "vue";
+import { nextTick,ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
-import { activeIndex, mode, selectedId, setSelectedByIndex, slides } from '../composables/useSlides';
+import { activeIndex, mode, selectedId, setSelectedByIndex, slides,  } from '../composables/useSlides';
+import type { Slide } from "../types";
 
 /**===================================================================================================================
- * 
- ===================================================================================================================**/
+ *
+===================================================================================================================**/
 const swiperRef = ref<any | null>(null);
+
+const isEditing = ref(false)
+const editingIndex = ref<number | null>(null)
+const editorRefs = ref<(HTMLElement | null)[]>([])
+const fileInputRef = ref<HTMLInputElement | null>(null)
+
+// エディタ要素の参照を保持
+function setEditorRef(el:HTMLElement | null, i: number) {
+  editorRefs.value[i] = el
+}
+
+// スライド背景クリック時の挙動
+function onSlideBodyClick(i: number, s: Slide) {
+  setSelectedByIndex(i)
+
+  if(s.type === 'text') {
+    startEdit(i)
+  } else if (s.type === 'image') {
+    fileInputRef.value?.click();
+    editingIndex.value = i
+  }
+}
+
+// 編集開始（テキスト）
+async function startEdit(i: number) {
+  isEditing.value = true;
+  editingIndex.value = i;
+  await nextTick();
+  const el = editorRefs.value[i];
+  if(el) {
+    // 末尾にキャレットを移動
+    placeCreateCaretAtEnd(el)
+    el.focus()
+  }
+}
+
+function stopEdit() {
+  isEditing.value = false
+  editingIndex.value = null
+}
+// 入力反映テキスト
+function onTextInput(i: number, e: Event) {
+  const el = e.target as HTMLElement
+  const t = el.innerText // 改行OK（plaintext-only）
+  const s = slides[mode.value][i];
+  if(s?.type === 'text') s.text = t;
+}
+
 
 function onSwiper(sw: any) {
   swiperRef.value = sw
@@ -96,6 +153,11 @@ function select(i: number) {
   setSelectedByIndex(i)
 }
 
+function onSwiperClick(sw: any) {
+    // ループ時はクローンがあるため、data-swiper-slide-index が「実インデックス」
+  const idx = Number(sw?.clickedSlide?.dataset?.swiperSlideIndex ?? -1)
+  if(idx >= 1) setSelectedByIndex(idx)
+}
  //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
