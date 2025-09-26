@@ -110,7 +110,7 @@ async function startEdit(i: number) {
   const el = editorRefs.value[i];
   if(el) {
     // 末尾にキャレットを移動
-    placeCreateCaretAtEnd(el)
+    placeCaretAtEnd(el)
     el.focus()
   }
 }
@@ -125,6 +125,37 @@ function onTextInput(i: number, e: Event) {
   const t = el.innerText // 改行OK（plaintext-only）
   const s = slides[mode.value][i];
   if(s?.type === 'text') s.text = t;
+}
+
+// Enterで改行、Escで編集終了
+function onEditorKeydown(e: KeyboardEvent) {
+  if(e.key === 'Escape') {
+    (e.target as HTMLElement).blur()
+    stopEdit()
+  }
+}
+
+// 画像差し替え
+function onPickFile(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  (e.target as HTMLInputElement).value = '' ; // 同じファイル再選択でも反応させたい
+  if(!file) return
+
+  const idx = editingIndex.value ?? activeIndex.value;
+  const s = slides[mode.value][idx];
+  if(!s || s.type === 'image') return;
+  const url = URL.createObjectURL(file);
+  s.src = url;
+}
+
+// キャレットを末尾へ
+function placeCaretAtEnd(el:HTMLElement) {
+  const range = document.createRange();
+  const sel = window.getSelection();
+  range.selectNodeContents(el)
+  range.collapse(false);
+  sel?.removeAllRanges();
+  sel?.addRange(range)
 }
 
 
