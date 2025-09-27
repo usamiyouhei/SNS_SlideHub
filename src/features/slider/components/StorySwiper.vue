@@ -160,11 +160,14 @@ function stopEdit() {
   editingIndex.value = null
 }
 // 入力反映テキスト
-function onTextInput(i: number, e: Event) {
+async function onTextInput(i: number, e: Event) {
   const el = e.target as HTMLElement
+  const caret = getCaret(el)
   const t = el.innerText // 改行OK（plaintext-only）
   const s = slides[mode.value][i];
   if(s?.type === 'text') s.text = t;
+  await nextTick();
+  if(caret) setCaret(el, caret.start)
 }
 
 // Enterで改行、Escで編集終了
@@ -188,6 +191,13 @@ function onPickFile(e: Event) {
   s.src = url;
 }
 
+function getCaret(el: HTMLElement) {
+
+}
+
+function setCaret(el: HTMLElement, pos: number) {
+
+}
 
 
 // キャレットを末尾へ
