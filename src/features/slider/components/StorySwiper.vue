@@ -31,7 +31,7 @@
             <div class="w-full h-full grid place-items-center"
                 :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined">
               <img v-if="s.type === 'image'" :src="s.src" alt="" class="w-full h-full absolute inset-0 object-cover">
-              <div v-else 
+              <!-- <div v-else 
                 contenteditable="plaintext-only"
                 :ref="el => setEditorRef(el, i)"
                 class="px-6 text-center break-words"
@@ -41,7 +41,27 @@
                 @keydown="onEditorKeydown"
                 @blur="stopEdit">
                 {{ s.text }}
-              </div>
+              </div> -->
+              <template v-else>
+                <!-- 編集中：Vue は中身を描画しない -->
+                  <div v-if="isEditing && editingIndex === i"
+                    contenteditable="plaintext-only"
+                    :ref="el => setEditorRef(el, i)"
+                    class="px-6 text-center break-words no-swiping-class"
+                    :class="{'no-swiping-class': isEditing && editingIndex === i}"
+                    :style="{ fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}"
+                    @input="onTextInput(i, $event)"
+                    @keydown="onEditorKeydown"
+                    @blur="stopEdit">
+                  </div>
+                  <!-- 非編集時：通常描画 -->
+                  <div v-else
+                    class="px-6 text-center break-words"
+                    :style="{fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}"
+                  >
+                  {{ s.text }}
+                  </div>
+              </template>
 
               <!-- 選択中の枠 -->
               <div v-if="selectedId === s.id" class="absolute inset-2 rounded-xl ring-4 ring-blue-500/70 pointer-events-none"></div>
@@ -126,6 +146,9 @@ async function startEdit(i: number) {
   await nextTick();
   const el = editorRefs.value[i];
   if(el) {
+    // 初期テキストを手動で反映（以後は @input で s.text を更新）
+    const s = slides[mode.value][i];
+    if(s?.type === 'text') el.textContent = s.text ?? '';
     // 末尾にキャレットを移動
     placeCaretAtEnd(el)
     el.focus()
