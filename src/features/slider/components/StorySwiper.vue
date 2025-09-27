@@ -15,7 +15,7 @@
           :preventClicks="false"
           :preventClicksPropagation="false"
           :slideToClickedSlide="true"
-          :arrowTouchMove="!isEditing"
+          :allowTouchMove="!isEditing"
           :noSwiping="true"
           :noSwipingClass="'no-swiping-class'"
           class="w-full h-full"
@@ -32,8 +32,14 @@
                 :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined">
               <img v-if="s.type === 'image'" :src="s.src" alt="" class="w-full h-full absolute inset-0 object-cover">
               <div v-else 
+                contenteditable="plaintext-only"
+                :ref="el => setEditorRef(el, i)"
                 class="px-6 text-center break-words"
-                :style="{ fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}">
+                :class="{'no-swiping-class': isEditing && editingIndex === i}"
+                :style="{ fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}"
+                @input="onTextInput(i, $event)"
+                @keydown="onEditorKeydown"
+                @blur="stopEdit">
                 {{ s.text }}
               </div>
 
@@ -42,6 +48,13 @@
             </div>
           </SwiperSlide>
         </Swiper>
+        <input
+          ref="fileInputRef"
+          type="file"
+          accept="image/*"
+          class="hidden"
+          @change="onPickFile"
+        />
       </div>
 
       <!-- 左ナビ -->
@@ -67,7 +80,7 @@
 
 <script setup lang="ts">
 import { Navigation, Pagination } from 'swiper/modules';
-import { nextTick,ref } from "vue";
+import { nextTick,ref, type ComponentPublicInstance } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -86,8 +99,12 @@ const editorRefs = ref<(HTMLElement | null)[]>([])
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
 // エディタ要素の参照を保持
-function setEditorRef(el:HTMLElement | null, i: number) {
-  editorRefs.value[i] = el
+function setEditorRef(el:Element | ComponentPublicInstance | null, i: number) {
+  const node = (el && typeof (el as any).$el !== 'undefined')
+    ? (el as any).$el as Element | null
+    : (el as Element | null)
+
+  editorRefs.value[i] = node instanceof HTMLElement ? node : null
 }
 
 // スライド背景クリック時の挙動
@@ -143,10 +160,12 @@ function onPickFile(e: Event) {
 
   const idx = editingIndex.value ?? activeIndex.value;
   const s = slides[mode.value][idx];
-  if(!s || s.type === 'image') return;
+  if(!s || s.type !== 'image') return;
   const url = URL.createObjectURL(file);
   s.src = url;
 }
+
+
 
 // キャレットを末尾へ
 function placeCaretAtEnd(el:HTMLElement) {
@@ -184,10 +203,11 @@ function select(i: number) {
   setSelectedByIndex(i)
 }
 
+// クリックで実インデックス取得（loop対策）
 function onSwiperClick(sw: any) {
     // ループ時はクローンがあるため、data-swiper-slide-index が「実インデックス」
   const idx = Number(sw?.clickedSlide?.dataset?.swiperSlideIndex ?? -1)
-  if(idx >= 1) setSelectedByIndex(idx)
+  if(idx >= 0) setSelectedByIndex(idx)
 }
  //------------------------------------------------------------------------------------------------------------
 // 引数
