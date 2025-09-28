@@ -1,7 +1,8 @@
 export type Mode = 'lesson' | 'gallery'
 
 export type SlideText =
-|{  id: string;
+|{  
+  id: string;
   type: 'text';
   text: string;
   fontSize:number;
@@ -11,9 +12,13 @@ export type SlideText =
 }
 
 export type SlideImage =
-|{  id: string;
+|{  
+  id: string;
   type: 'image';
-  src: string
+  src: string;
+  text?: string;
+  fontSize?: number;
+  color?: string;
 }
 
 export type Slide = SlideText | SlideImage
