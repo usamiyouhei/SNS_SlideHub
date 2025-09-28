@@ -120,10 +120,7 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 
 // エディタ要素の参照を保持
 function setEditorRef(el:Element | ComponentPublicInstance | null, i: number) {
-  const node = (el && typeof (el as any).$el !== 'undefined')
-    ? (el as any).$el as Element | null
-    : (el as Element | null)
-
+  const node = (el && (el as any).$el) ? (el as any).$el as Element : (el as Element | null)
   editorRefs.value[i] = node instanceof HTMLElement ? node : null
 }
 
@@ -160,14 +157,10 @@ function stopEdit() {
   editingIndex.value = null
 }
 // 入力反映テキスト
-async function onTextInput(i: number, e: Event) {
+function onTextInput(i: number, e: Event) {
   const el = e.target as HTMLElement
-  const caret = getCaret(el)
-  const t = el.innerText // 改行OK（plaintext-only）
   const s = slides[mode.value][i];
-  if(s?.type === 'text') s.text = t;
-  await nextTick();
-  if(caret) setCaret(el, caret.start)
+  if(s?.type === 'text') s.text = el.innerText;
 }
 
 // Enterで改行、Escで編集終了
@@ -191,13 +184,14 @@ function onPickFile(e: Event) {
   s.src = url;
 }
 
-function getCaret(el: HTMLElement) {
+// function getCaret(el: HTMLElement) {
+//   const sel = window.getSelection()
+//   if()
+// }
 
-}
+// function setCaret(el: HTMLElement, pos: number) {
 
-function setCaret(el: HTMLElement, pos: number) {
-
-}
+// }
 
 
 // キャレットを末尾へ
