@@ -30,8 +30,9 @@
             <div class="w-full h-full grid place-items-center"
                 :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined"
                 @click="startEdit(i)">
-                <div v-if="s.type === 'image'"  class="relative w-full h-full">
-                  <img 
+                  <!-- 画像スライド -->
+                <template v-if="s.type === 'image'" >
+                  <img
                     :src="s.src" 
                     alt="" 
                     class="w-full h-full absolute inset-0 object-cover"
@@ -53,14 +54,16 @@
                   @input="onOverlayInput(i, $event)"
                   @keydown="onEditorKeydown"
                   @blur="stopEdit"
-                  ></div>
-
+                  >
                 </div>
+              </template>
+
               <!-- 編集時は contenteditable を1つだけ出す。非編集時は表示だけ -->
 
-              <template v-if="isEditing && editingIndex === i">
+              <template v-else >
                 <!-- 編集中：Vue は中身を描画しない -->
-                  <div 
+                  <div
+                    v-if="isEditing && editingIndex === i"
                     contenteditable="plaintext-only"
                     :ref="el => setEditorRef(el, i)"
                     class="px-6 text-center break-words no-swiping-class"

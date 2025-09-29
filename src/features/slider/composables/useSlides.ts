@@ -7,36 +7,49 @@ export const selectedId = ref<string | null>(null) // クリック選択中の�
 
 export const slides = reactive<SlideState>({
   lesson: [
-    { id: 'l1', type: 'text', text: '単語: accomodation', fontSize: 28 },
-    { id: 'l2', type: 'image', src: '/img/photo1.jpeg' }
+    { id: 'l1', bgType: 'color', bgColor: '#fff', text: '単語: accomodation', fontSize: 28, color: '#222' },
+    { id: 'l2', bgType: 'image', bgImage: '/img/photo1.jpeg' }
   ],
   gallery: [
-    { id: 'g1', type: 'image', src: '/img/photo2.jpeg'},
-    { id: 'g2', type: 'image', src: '/img/photo3.jpeg'},
+    { id: 'g1', bgType: 'image', bgImage: '/img/photo2.jpeg'},
+    { id: 'g2', bgType: 'image', bgImage: '/img/photo3.jpeg'},
   ]
   
 })
 
-export function addText(text: string, size: number){
-  if(!text.trim()) return
+// export function addText(text: string, size: number){
+//   if(!text.trim()) return
+//   slides[mode.value].push({
+//     id:`t-{Date.now()}`,
+//     type: 'text',
+//     text: text.trim(),
+//     fontSize: size,
+//     bg:'#fff',
+//     color: '#222'
+//   })
+// }
+
+// export function addImage(url: string) {
+//   if(!url.trim()) return
+//   slides[mode.value].push({
+//     id:`i-{Date.now()}`,
+//     type:'image',
+//     src: url.trim()
+//   })
+// }
+
+export function addImage(bgType: 'color'| 'image', options: Partial<Slide> = {}) {
   slides[mode.value].push({
-    id:`t-{Date.now()}`,
-    type: 'text',
-    text: text.trim(),
-    fontSize: size,
-    bg:'#fff',
-    color: '#222'
+    id:`${ bgType } - ${Date.now()}`,
+    bgType,
+    bgColor: options.bgColor ?? '#222',
+    bgImage: options.bgImage ?? '',
+    text: options.text ?? '',
+    fontSize: options.fontSize ?? 28,
+    color: options.color ?? '#fff'
   })
 }
 
-export function addImage(url: string) {
-  if(!url.trim()) return
-  slides[mode.value].push({
-    id:`i-{Date.now()}`,
-    type:'image',
-    src: url.trim()
-  })
-}
 
 // i = インデックス番号（0, 1, 2 …）
 // 	s = その配列の要素（Slide オブジェクト）
