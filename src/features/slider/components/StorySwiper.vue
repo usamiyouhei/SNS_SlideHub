@@ -30,18 +30,34 @@
           >
             <div class="w-full h-full grid place-items-center"
                 :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined">
-              <img v-if="s.type === 'image'" :src="s.src" alt="" class="w-full h-full absolute inset-0 object-cover">
-              <!-- <div v-else 
-                contenteditable="plaintext-only"
-                :ref="el => setEditorRef(el, i)"
-                class="px-6 text-center break-words"
-                :class="{'no-swiping-class': isEditing && editingIndex === i}"
-                :style="{ fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}"
-                @input="onTextInput(i, $event)"
-                @keydown="onEditorKeydown"
-                @blur="stopEdit">
-                {{ s.text }}
-              </div> -->
+                <div v-if="s.type === 'image'"  class="relative w-full h-full">
+                  <img 
+                    :src="s.src" 
+                    alt="" 
+                    class="w-full h-full absolute inset-0 object-cover"
+                    @click="onPickImage(i)"
+                    >
+                <div v-if="!(isEditing && editingIndex === i)"
+                  class="absolute inset-0 grid place-items-center"
+                  @click.stop="startEditOverlay(i)">
+                  <div 
+                    class="px-6 text-center break-words"
+                    :style="{ fontSize : (s.fontSize || 28) + 'px', color: s.color || '#fff' , whiteSpace: 'pre-wrap'}">
+                    {{ s.text }}
+                  </div>
+                </div>
+                <div v-else
+                  contenteditable="plaintext-only"
+                  :ref="el => setEditorRef(el, i)"
+                  class="absolute inset-0 grid "
+                  :style="{ whiteSpace: 'pre-wrap'}"
+                  @input="onOverlayInput(i, $event)"
+                  @keydown="onEditorKeydown"
+                  @blur="stopEdit"
+                  ></div>
+
+                </div>
+              
               <template v-else>
                 <!-- 編集中：Vue は中身を描画しない -->
                   <div v-if="isEditing && editingIndex === i"
@@ -184,14 +200,34 @@ function onPickFile(e: Event) {
   s.src = url;
 }
 
-// function getCaret(el: HTMLElement) {
-//   const sel = window.getSelection()
-//   if()
-// }
+// 画像クリック → ファイル選択
+function onPickImage(i: number) {
+  setSelectedByIndex(i)
+  editingIndex.value = i
+  fileInputRef.value?.click()
+}
 
-// function setCaret(el: HTMLElement, pos: number) {
+// 画像テキスト編集開始
+async function startEditOverlay(i: number) {
+  isEditing.value = true
+  editingIndex.value = i
+  await nextTick()
+  const el = editorRefs.value[i]
+  if(!el) return
+  const s = slides[mode.value][i]
+  if(s?.type === 'image'){
+    el.textContent = s.text ?? '';
+    placeCaretAtEnd(el)
+    el.focus()
+  }
+}
 
-// }
+// 入力を SlideImage.text に反映（描画は非編集時だけなのでカーソルは飛ばない）
+function onOverlayInput(i: number, e: Event){
+  const el = e.target as HTMLElement
+  const s = slides[mode.value][i]
+  if(s?.type === 'image') s.text = el.innerText
+}
 
 
 // キャレットを末尾へ
