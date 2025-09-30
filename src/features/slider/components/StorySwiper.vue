@@ -27,65 +27,36 @@
             v-for="(s, i) in slides[mode]"
             :key="s.id"
           >
-            <div class="w-full h-full grid place-items-center"
-                :style="s.type === 'text' ? { background: s.bg || '#222'} : undefined"
+          <!-- 背景：画像（必要なときだけ） -->
+              <div class="w-full h-full grid place-items-center"
+                :style="s.bgType === 'color' ? { background: s.bgColor || '#222'} : undefined"
                 @click="startEdit(i)">
                   <!-- 画像スライド -->
-                <template v-if="s.type === 'image'" >
-                  <img
-                    :src="s.src" 
-                    alt="" 
+                  <img v-if="s.bgType === 'image' && s.bgImage"
+                    :src="s.bgImage"
+                    alt=""
                     class="w-full h-full absolute inset-0 object-cover"
-                    >
+                  >
+                <!-- 編集中：contenteditable（Vueは中身を描かない） -->
                 <div v-if="!(isEditing && editingIndex === i)"
-                  class="absolute inset-0 grid place-items-center"
-                  @click.stop="startEditOverlay(i)">
-                  <div 
-                    class="px-6 text-center break-words"
-                    :style="{ fontSize : (s.fontSize || 28) + 'px', color: s.color || '#fff' , whiteSpace: 'pre-wrap'}">
-                    {{ s.text }}
-                  </div>
-                </div>
-                <div v-else
                   contenteditable="plaintext-only"
                   :ref="el => setEditorRef(el, i)"
-                  class="absolute inset-0 grid "
-                  :style="{ whiteSpace: 'pre-wrap'}"
-                  @input="onOverlayInput(i, $event)"
+                  class="absolute inset-0 grid place-items-center no-swiping-class"
+                  :style="{whiteSpace: 'pre-wrap', color:(s.color || '#fff'), fontSize:(s.fontSize || 28) + 'px' }"
+                  @input="onTextInput(i, $event)"
                   @keydown="onEditorKeydown"
-                  @blur="stopEdit"
-                  >
+                  @blur="stopEdit">
                 </div>
-              </template>
-
-              <!-- 編集時は contenteditable を1つだけ出す。非編集時は表示だけ -->
-
-              <template v-else >
-                <!-- 編集中：Vue は中身を描画しない -->
-                  <div
-                    v-if="isEditing && editingIndex === i"
-                    contenteditable="plaintext-only"
-                    :ref="el => setEditorRef(el, i)"
-                    class="px-6 text-center break-words no-swiping-class"
-                    :class="{'no-swiping-class': isEditing && editingIndex === i}"
-                    :style="{ fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}"
-                    @input="onAnyTextInput(i, $event)"
-                    @keydown="onEditorKeydown"
-                    @blur="stopEdit">
-                  </div>
-              </template>
-                  <!-- 非編集時：通常描画 -->
-              <template v-else>
-                <div
+                <!-- 非編集時：通常表示 -->
+                <div v-else
                   class="px-6 text-center break-words"
-                  :style="{fontSize: (s.fontSize || 28) + 'px', color: s.color || '#fff'}"
-                >
-                {{ s.text }}
+                  :style="{whiteSpace: 'pre-wrap', fontSize : (s.fontSize || 28) + 'px', color: s.color || '#fff' ,}">
+                  {{ s.text }}
                 </div>
-              </template>
-
               <!-- 選択中の枠 -->
-              <div v-if="selectedId === s.id" class="absolute inset-2 rounded-xl ring-4 ring-blue-500/70 pointer-events-none"></div>
+              <div v-if="selectedId === s.id" 
+                class="absolute inset-2 rounded-xl ring-4 ring-blue-500/70 pointer-events-none">
+              </div>
             </div>
           </SwiperSlide>
         </Swiper>
@@ -163,15 +134,13 @@ async function startEdit(i: number) {
   editingIndex.value = i;
   await nextTick();
   const el = editorRefs.value[i];
-  if(el) {
+  if(!el) return
     // 初期テキストを手動で反映（以後は @input で s.text を更新）
     const s = slides[mode.value][i];
-    if(s?.type === 'text') 
     el.textContent = (s as any).text ?? '';
     // 末尾にキャレットを移動
     placeCaretAtEnd(el)
     el.focus()
-  }
 }
 
 function stopEdit() {
@@ -180,7 +149,7 @@ function stopEdit() {
 }
 
 // 入力反映テキスト
-function onAnyTextInput(i: number, e: Event) {
+function onTextInput(i: number, e: Event) {
   const el = e.target as HTMLElement
   const s = slides[mode.value][i];
   if(s)(s as any).text = el.innerText;
@@ -194,17 +163,29 @@ function onEditorKeydown(e: KeyboardEvent) {
   }
 }
 
+function onPickbgImage() {
+  const idx = editingIndex.value ?? activeIndex.value
+  if(idx === null) return
+  fileInputRef.value?.click()
+}
+
 // 画像差し替え
 function onPickFile(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0];
-  (e.target as HTMLInputElement).value = '' ; // 同じファイル再選択でも反応させたい
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0];
+  input.value = '' ; // 同じファイル再選択でも反応させたい
   if(!file) return
 
   const idx = editingIndex.value ?? activeIndex.value;
-  const s = slides[mode.value][idx];
-  if(!s || s.type !== 'image') return;
+  const arr = slides[mode.value];
+  if(idx < 0 || idx >= arr.length) return
+
+  const s = arr[idx];
+  if(!s) return
+
   const url = URL.createObjectURL(file);
-  s.src = url;
+  s.bgType = 'image' as const
+  s.bgImage = url;
 }
 
 // // 画像クリック → ファイル選択
@@ -215,26 +196,26 @@ function onPickFile(e: Event) {
 // }
 
 // 画像テキスト編集開始
-async function startEditOverlay(i: number) {
-  isEditing.value = true
-  editingIndex.value = i
-  await nextTick()
-  const el = editorRefs.value[i]
-  if(!el) return
-  const s = slides[mode.value][i]
-  if(s?.type === 'image'){
-    el.textContent = s.text ?? '';
-    placeCaretAtEnd(el)
-    el.focus()
-  }
-}
+// async function startEditOverlay(i: number) {
+//   isEditing.value = true
+//   editingIndex.value = i
+//   await nextTick()
+//   const el = editorRefs.value[i]
+//   if(!el) return
+//   const s = slides[mode.value][i]
+//   if(s?.type === 'image'){
+//     el.textContent = s.text ?? '';
+//     placeCaretAtEnd(el)
+//     el.focus()
+//   }
+// }
 
 // 入力を SlideImage.text に反映（描画は非編集時だけなのでカーソルは飛ばない）
-function onOverlayInput(i: number, e: Event){
-  const el = e.target as HTMLElement
-  const s = slides[mode.value][i]
-  if(s?.type === 'image') s.text = el.innerText
-}
+// function onOverlayInput(i: number, e: Event){
+//   const el = e.target as HTMLElement
+//   const s = slides[mode.value][i]
+//   if(s?.type === 'image') s.text = el.innerText
+// }
 
 
 // キャレットを末尾へ
