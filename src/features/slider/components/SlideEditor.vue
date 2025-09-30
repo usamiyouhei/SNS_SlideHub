@@ -81,8 +81,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { getSelected, addText, addImage  } from '../composables/useSlides';
-import type { Slide, SlideImage, SlideText } from '../types';
+import { getSelected, addImage  } from '../composables/useSlides';
+import type { Slide } from '../types';
 /**===================================================================================================================
  * 
  ===================================================================================================================**/
@@ -92,9 +92,9 @@ const emit = defineEmits<{ remove: [id: string] }>()
 const current = computed<Slide | null>(() => getSelected())
 
 // テキストスライドに絞ったビュー（text 以外は null）
-const textSlide = computed<SlideText | null>(() => current.value?.type === 'text' ? current.value : null)
+const textSlide = computed<Slide | null>(() => current.value?.type === 'text' ? current.value : null)
 
-const imageSlide = computed<SlideImage | null>(() => current.value?.type === 'image' ? current.value : null)
+const imageSlide = computed<Slide | null>(() => current.value?.bgType === 'image' ? current.value : null)
 // image編集用
 const imageUrl = ref('')
 let pickedObjectUrl: string | null = null
