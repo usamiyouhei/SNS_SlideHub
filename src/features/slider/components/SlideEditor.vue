@@ -9,38 +9,56 @@
     </div>
 
     <!-- Slide Text -->
-    <div v-if="textSlide" class="rounded-xl border p-4 space-y-4">
+    <div v-if="current" class="rounded-xl border p-4 space-y-4">
       <h4 class="font-medium">テキスト</h4>
-        <textarea v-model="textSlide.text" rows="3" class="w-full rounded-lg border p-2" placeholder="ここに文章を入力"></textarea>
+        <textarea v-model="current.text" rows="3" class="w-full rounded-lg border p-2" placeholder="ここに文章を入力"></textarea>
           <!-- Text Slide -->
         <div class="flex items-center gap-4">
           <label class="text-sm">文字サイズ</label>
-          <input type="range" min="16" max="60" v-model.number="textSlide.fontSize">
-          <span class="text-sm w-10 text-right">{{ textSlide.fontSize }}</span>
+          <input type="range" min="16" max="60" v-model.number="current.fontSize">
+          <span class="text-sm w-10 text-right">{{ current.fontSize }}</span>
         </div>
 
       <div class="flex items-center gap-4">
         <label class="text-sm">文字色</label>
-        <input type="color" class="" v-model="textSlide.color">
-        <label class="text-sm">背景</label>
-        <input type="color" v-model="textSlide.bg">
+        <input type="color" class="" v-model="current.color">
       </div>
     </div>
 
-    <!-- Image Slide -->
-    <div v-if="imageSlide" class="rounded-xl border p-4 space-y-4">
-      <h4 class="font-medium">画像</h4>
-      <input v-model="imageSlide.src"  type="text" class="w-full rounded-lg border p-2" placeholder="画像URL">
+    <!-- 背景 -->
+    <div v-if="current"
+        class="rounded-xl border p-4 space-y-4">
+        <h4 class="font-medium">背景</h4>
 
-      <div v-if="imageUrl" class="rounded-lg border overflow-hidden">
-        <img :src="imageUrl" alt="preview" class="max-w-full">
-      </div>
+        <div class="flex gap-4 items-center">
+          <label class="inline-flex items-center gap-2">
+            <input type="radio" value="color" v-model="current.bgType">
+            <span>色</span>
+          </label>
+          <label class="inline-flex items-center gap-2">
+            <input type="radio" value="image" v-model="current.bgType">
+            <span>画像</span>
+          </label>
+        </div>
 
-      <div class="flex gap-2">
-        <input id="file-edit" type="file" accept="image/*" class="sr-only" @change="onPick">
-        <label for="file-edit" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-100 active:scale-[0.99]">ファイルを選択</label>
-        <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="applyImage" >差し替え</button>
-      </div>
+        <div v-if="current.bgType === 'color'" class="flex items-center gap-2">
+
+        </div>
+
+        <!-- Image Slide -->
+        <div v-else class="space-y-3">
+          <input v-model="current.bgImage"  type="text" class="w-full rounded-lg border p-2" placeholder="画像URL">
+          <div class="flex gap-2">
+            <input id="bg-file" type="file" accept="image/*" class="sr-only" @click="onPickBg">
+            <label for="bg-file" class="cursor-pointer">ファイルを選択</label>
+          </div>
+
+          <div class="flex gap-2">
+            <input id="file-edit" type="file" accept="image/*" class="sr-only" @change="onPick">
+            <label for="file-edit" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-100 active:scale-[0.99]">ファイルを選択</label>
+            <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="applyImage" >差し替え</button>
+          </div>
+        </div>
     </div>
 
     <!-- 共通削除 -->
@@ -92,9 +110,9 @@ const emit = defineEmits<{ remove: [id: string] }>()
 const current = computed<Slide | null>(() => getSelected())
 
 // テキストスライドに絞ったビュー（text 以外は null）
-const textSlide = computed<Slide | null>(() => current.value?.type === 'text' ? current.value : null)
+// const textSlide = computed<Slide | null>(() => current.value?.type === 'text' ? current.value : null)
 
-const imageSlide = computed<Slide | null>(() => current.value?.bgType === 'image' ? current.value : null)
+// const imageSlide = computed<Slide | null>(() => current.value?.bgType === 'image' ? current.value : null)
 // image編集用
 const imageUrl = ref('')
 let pickedObjectUrl: string | null = null
@@ -110,17 +128,17 @@ function onPick(e: Event) {
 }
 
 
-function applyImage() {
-  if(!imageSlide.value) return
-  const url = imageUrl.value.trim()
-  if(!url) return
-  imageSlide.value.src = url;
-  imageUrl.value = ''
-  if(pickedObjectUrl) {
-    URL.revokeObjectURL(pickedObjectUrl)
-    pickedObjectUrl = null
-  }
-}
+// function applyImage() {
+//   if(!imageSlide.value) return
+//   const url = imageUrl.value.trim()
+//   if(!url) return
+//   imageSlide.value.src = url;
+//   imageUrl.value = ''
+//   if(pickedObjectUrl) {
+//     URL.revokeObjectURL(pickedObjectUrl)
+//     pickedObjectUrl = null
+//   }
+// }
 
 // 新規追加
 const newText = ref('');
