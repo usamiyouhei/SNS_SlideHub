@@ -80,8 +80,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { getSelected, addImage  } from '../composables/useSlides';
+import { ref, computed, watch } from "vue";
+import { getSelected, addSlide  } from '../composables/useSlides';
 import type { Slide } from '../types';
 /**===================================================================================================================
  * 
@@ -91,13 +91,16 @@ const emit = defineEmits<{ remove: [id: string] }>()
 // 現在のスライド（text か image のどちらか or null）
 const current = computed<Slide | null>(() => getSelected())
 
+// 背景=画像 のプレビュー（ObjectURL 用）
+const bgPreviewUrl = ref<string>('')
+let pickedObjectUrl: string | null = null
+
 // テキストスライドに絞ったビュー（text 以外は null）
 // const textSlide = computed<Slide | null>(() => current.value?.type === 'text' ? current.value : null)
 
 // const imageSlide = computed<Slide | null>(() => current.value?.bgType === 'image' ? current.value : null)
 // image編集用
 const imageUrl = ref('')
-let pickedObjectUrl: string | null = null
 const newPickedUrl = ref('')
 let newPickedObjectUrl: string | null = null
 
