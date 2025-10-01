@@ -54,7 +54,7 @@
           </div>
 
           <div class="flex gap-2">
-            <input id="file-edit" type="file" accept="image/*" class="sr-only" @change="onPick">
+            <input id="file-edit" type="file" accept="image/*" class="sr-only" @change="onPickBg">
             <label for="file-edit" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-100 active:scale-[0.99]">ファイルを選択</label>
             <button class="px-3 py-2 rounded-lg border" @click="clearBgImage" >画像を外す</button>
           </div>
@@ -93,24 +93,57 @@ const current = computed<Slide | null>(() => getSelected())
 
 // 背景=画像 のプレビュー（ObjectURL 用）
 const bgPreviewUrl = ref<string>('')
-let pickedObjectUrl: string | null = null
+let bgPickedObjectUrl: string | null = null
 
-// テキストスライドに絞ったビュー（text 以外は null）
-// const textSlide = computed<Slide | null>(() => current.value?.type === 'text' ? current.value : null)
+// v-model で bgType が切り替わった時のデフォルト補助
+watch(() => current.value?.bgType, (t) => {
+  if(!current.value) return
+  if(t === 'color' && !current.value.bgColor) current.value.bgColor = '#222'
+  if(t === 'image' && !current.value.bgImage) current.value.bgImage = ''
+} )
 
-// const imageSlide = computed<Slide | null>(() => current.value?.bgType === 'image' ? current.value : null)
-// image編集用
-const imageUrl = ref('')
-const newPickedUrl = ref('')
-let newPickedObjectUrl: string | null = null
-
-function onPick(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
+function onPickBg(e: Event) {
+  if(!current.value) return
+  const file = (e.target as HTMLInputElement).files?.[0];
+  (e.target as HTMLInputElement).value = ''
   if(!file) return
-  if(pickedObjectUrl) URL.revokeObjectURL(pickedObjectUrl)
-  pickedObjectUrl = URL.createObjectURL(file)
-  imageUrl.value = pickedObjectUrl
+  
+  if(bgPickedObjectUrl) URL.revokeObjectURL(bgPickedObjectUrl)
+  bgPickedObjectUrl = URL.createObjectURL(file)
+
+  current.value.bgType = 'image'
+  current.value.bgImage = bgPickedObjectUrl
+  bgPreviewUrl.value = bgPickedObjectUrl
 }
+
+function clearBgImage() {
+
+}
+
+// 新規追加：色 / 画像
+function addColorSlide() {
+
+}
+
+const newBgInputRef = ref<HTMLInputElement | null>(null)
+function triggerPickNewBg(){ newBgInputRef.value?.click()}
+
+function onPickNewBg(e: Event) {
+
+}
+
+// image編集用
+// const imageUrl = ref('')
+// const newPickedUrl = ref('')
+// let newPickedObjectUrl: string | null = null
+
+// function onPick(e: Event) {
+//   const file = (e.target as HTMLInputElement).files?.[0]
+//   if(!file) return
+//   if(pickedObjectUrl) URL.revokeObjectURL(pickedObjectUrl)
+//   pickedObjectUrl = URL.createObjectURL(file)
+//   imageUrl.value = pickedObjectUrl
+// }
 
 
 // function applyImage() {
@@ -129,30 +162,30 @@ function onPick(e: Event) {
 const newText = ref('');
 const newSize = ref(28);
 const newImageUrl = ref('')
-function onAddText() {
-  addText(newText.value , newSize.value)
-  newText.value = ''
-}
-function onAddImage() {
-  const src = ( newPickedUrl.value || newImageUrl.value ).trim()
-  if(!src) return
-  addImage(src)
+// function onAddText() {
+//   addText(newText.value , newSize.value)
+//   newText.value = ''
+// }
+// function onAddImage() {
+//   const src = ( newPickedUrl.value || newImageUrl.value ).trim()
+//   if(!src) return
+//   addImage(src)
 
-  if(newPickedObjectUrl) {
-    URL.revokeObjectURL(newPickedObjectUrl)
-    newPickedObjectUrl = null
-  }
-  newPickedUrl.value = ''
-  newImageUrl.value = ''
-}
+//   if(newPickedObjectUrl) {
+//     URL.revokeObjectURL(newPickedObjectUrl)
+//     newPickedObjectUrl = null
+//   }
+//   newPickedUrl.value = ''
+//   newImageUrl.value = ''
+// }
 
-function onPickNew(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if(!file) return
-  if(newPickedObjectUrl) URL.revokeObjectURL(newPickedObjectUrl)
-  newPickedObjectUrl = URL.createObjectURL(file)
-  newPickedUrl.value = newPickedObjectUrl
-}
+// function onPickNew(e: Event) {
+//   const file = (e.target as HTMLInputElement).files?.[0]
+//   if(!file) return
+//   if(newPickedObjectUrl) URL.revokeObjectURL(newPickedObjectUrl)
+//   newPickedObjectUrl = URL.createObjectURL(file)
+//   newPickedUrl.value = newPickedObjectUrl
+// }
  //------------------------------------------------------------------------------------------------------------
 // 引数
 //------------------------------------------------------------------------------------------------------------
