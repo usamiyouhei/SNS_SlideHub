@@ -38,7 +38,7 @@ export const slides = reactive<SlideState>({
 //   })
 // }
 
-export function addImage(bgType: 'color'| 'image', options: Partial<Slide> = {}) {
+export function addSlide(bgType: 'color'| 'image', options: Partial<Slide> = {}) {
   slides[mode.value].push({
     id:`${ bgType } - ${Date.now()}`,
     bgType,
