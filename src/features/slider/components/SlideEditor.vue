@@ -117,7 +117,14 @@ function onPickBg(e: Event) {
 }
 
 function clearBgImage() {
-
+  if(!current.value) return
+  current.value.bgImage = ''
+  if(bgPickedObjectUrl) {
+    URL.revokeObjectURL(bgPickedObjectUrl)
+    bgPickedObjectUrl = null
+  }
+  bgPreviewUrl.value = ''
+  current.value.bgType = 'color';
 }
 
 // 新規追加：色 / 画像
