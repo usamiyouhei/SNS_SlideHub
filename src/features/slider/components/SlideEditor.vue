@@ -49,11 +49,6 @@
         <div v-else class="space-y-3">
           <input v-model="current.bgImage"  type="text" class="w-full rounded-lg border p-2" placeholder="画像URL">
           <div class="flex gap-2">
-            <input id="bg-file" type="file" accept="image/*" class="sr-only" @click="onPickBg">
-            <label for="bg-file" class="cursor-pointer">ファイルを選択</label>
-          </div>
-
-          <div class="flex gap-2">
             <input id="file-edit" type="file" accept="image/*" class="sr-only" @change="onPickBg">
             <label for="file-edit" class="cursor-pointer inline-flex items-center px-3 py-2 rounded-lg border bg-white hover:bg-zinc-100 active:scale-[0.99]">ファイルを選択</label>
             <button class="px-3 py-2 rounded-lg border" @click="clearBgImage" >画像を外す</button>
@@ -73,7 +68,7 @@
         <div class="flex flex-wrap items-end gap-3">
           <button class="px-3 py-2 rounded-lg bg-zinc-600 text-white" @click="addColorSlide">色背景で追加</button>
           <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="triggerPickNewBg">画像背景で追加</button>
-          <input ref="newBgInputRef" type="file" accept="image/*" class="sr-only" @click="onPickNewBg">
+          <input ref="newBgInputRef" type="file" accept="image/*" class="sr-only" @change="onPickNewBg">
         </div>
       </div>
   </aside>
@@ -102,6 +97,14 @@ watch(() => current.value?.bgType, (t) => {
   if(t === 'image' && !current.value.bgImage) current.value.bgImage = ''
 } )
 
+watch(current, (slide) => {
+  if(!slide) return
+  if(!slide.fontSize) slide.fontSize = 28
+  if(!slide.color || !/^#([0-9a-fA-F]{6})$/.test(slide.color)) slide.color = '#ffffff'
+  if(!slide.bgType) slide.bgType = 'color'
+  if(slide.bgType === 'color' && !slide.bgColor) slide.bgColor === '#222222'
+},{immediate: true})
+
 function onPickBg(e: Event) {
   if(!current.value) return
   const file = (e.target as HTMLInputElement).files?.[0];
@@ -129,13 +132,18 @@ function clearBgImage() {
 
 // 新規追加：色 / 画像
 function addColorSlide() {
-
+  addSlide( 'color',{ text: '', bgColor: '#222', color: '#fff', fontSize: 28})
 }
 
 const newBgInputRef = ref<HTMLInputElement | null>(null)
 function triggerPickNewBg(){ newBgInputRef.value?.click()}
 
 function onPickNewBg(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  (e.target as HTMLInputElement).value = ''
+  if(!file) return
+  const url = URL.createObjectURL(file)
+  addSlide('image', { bgImage: url, text: '', color: '', fontSize: 28 })
 
 }
 
