@@ -42,7 +42,8 @@
         </div>
 
         <div v-if="current.bgType === 'color'" class="flex items-center gap-2">
-
+            <input type="color" v-model="current.bgColor">
+            <span class="text-xs opacity-70">{{ current.bgColor }}</span>
         </div>
 
         <!-- Image Slide -->
