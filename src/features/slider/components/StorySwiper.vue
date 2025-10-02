@@ -28,7 +28,7 @@
             :key="s.id"
           >
           <!-- 背景：画像（必要なときだけ） -->
-              <div class="w-full h-full grid place-items-center"
+              <div class="relative w-full h-full grid place-items-center"
                 :style="s.bgType === 'color' ? { background: s.bgColor || '#222'} : undefined"
                 @click="startEdit(i)">
                   <!-- 画像スライド -->
@@ -38,14 +38,16 @@
                     class="w-full h-full absolute inset-0 object-cover"
                   >
                 <!-- 編集中：contenteditable（Vueは中身を描かない） -->
-                <div v-if="!(isEditing && editingIndex === i)"
+                <div v-if="isEditing && editingIndex === i"
                   contenteditable="plaintext-only"
                   :ref="el => setEditorRef(el, i)"
                   class="absolute inset-0 grid place-items-center no-swiping-class"
                   :style="{whiteSpace: 'pre-wrap', color:(s.color || '#fff'), fontSize:(s.fontSize || 28) + 'px' }"
+                  @click.stop
                   @input="onTextInput(i, $event)"
                   @keydown="onEditorKeydown"
-                  @blur="stopEdit">
+                  @blur="stopEdit"
+                  @dblclick="startEdit(i)">
                 </div>
                 <!-- 非編集時：通常表示 -->
                 <div v-else
@@ -130,6 +132,7 @@ function setEditorRef(el:Element | ComponentPublicInstance | null, i: number) {
 
 // 編集開始（テキスト）
 async function startEdit(i: number) {
+  if(isEditing.value && editingIndex.value === i ) return
   isEditing.value = true;
   editingIndex.value = i;
   await nextTick();
