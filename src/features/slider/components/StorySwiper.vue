@@ -7,7 +7,7 @@
 
     <!-- canvas -->
       <div
-        class="w-full aspect-[9/16] max-h-[85vh] rounded-2xl overflow-hidden border bg-gray-300"
+        class="relative isolate w-full aspect-[9/16] max-h-[85vh] rounded-2xl overflow-hidden border bg-gray-300"
         style="--swiper-navigation-color:#fff; --swiper-navigation-size:28px; --swiper-pagination-color:#fff;">
         <Swiper
           :modules="[Navigation,Pagination]"
@@ -35,7 +35,7 @@
                   <img v-if="s.bgType === 'image' && s.bgImage"
                     :src="s.bgImage"
                     alt=""
-                    class="w-full h-full absolute inset-0 object-cover"
+                    class="w-full h-full absolute inset-0 object-cover pointer-events-none"
                   >
                 <!-- 編集中：contenteditable（Vueは中身を描かない） -->
                 <div v-if="isEditing && editingIndex === i"
@@ -47,7 +47,7 @@
                   @input="onTextInput(i, $event)"
                   @keydown="onEditorKeydown"
                   @blur="stopEdit"
-                  @dblclick="startEdit(i)">
+                  >
                 </div>
                 <!-- 非編集時：通常表示 -->
                 <div v-else
@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import { Navigation, Pagination } from 'swiper/modules';
-import { nextTick,ref, type ComponentPublicInstance } from "vue";
+import { nextTick,ref,watch, type ComponentPublicInstance } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import 'swiper/css'
 import 'swiper/css/pagination'
