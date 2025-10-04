@@ -107,6 +107,15 @@ import type { Slide } from "../types";
 ===================================================================================================================**/
 const swiperRef = ref<any | null>(null);
 
+watch(activeIndex, (i) => {
+  if(!swiperRef.value?.slideTo) return
+  if(typeof swiperRef.value.slideToLoop === 'function') {
+    swiperRef.value.slideToLoop(i)
+} else {
+  swiperRef.value.slideTo(i)
+}
+})
+
 const isEditing = ref(false)
 const editingIndex = ref<number | null>(null)
 const editorRefs = ref<(HTMLElement | null)[]>([])
@@ -234,11 +243,18 @@ function placeCaretAtEnd(el:HTMLElement) {
 
 function onSwiper(sw: any) {
   swiperRef.value = sw
-  setSelectedByIndex(sw.realIndex ?? sw.activeIndex ?? 0)
+  const idx = sw.realIndex ?? sw.activeIndex ?? 0
+  if(selectedId.value) {
+    if(typeof sw.slideToLoop === 'function') sw.slideToLoop(activeIndex.value)
+    else sw.slideTo(activeIndex.value)
+  } else {
+    setSelectedByIndex(idx)
+  }
 }
 
 function onSlideChange(sw: any) {
-  setSelectedByIndex(sw.realIndex ?? sw.activeIndex ?? 0)
+  const idx = sw.realIndex ?? sw.activeIndex ?? 0
+  if( idx !== activeIndex.value) setSelectedByIndex(idx)
 }
 
 function prev() {
