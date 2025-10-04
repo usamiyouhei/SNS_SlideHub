@@ -99,11 +99,11 @@ watch(() => current.value?.bgType, (t) => {
 } )
 
 watch(current, (slide) => {
-  if(!slide) return
-  if(!slide.fontSize) slide.fontSize = 28
-  if(!slide.color || !/^#([0-9a-fA-F]{6})$/.test(slide.color)) slide.color = '#ffffff'
-  if(!slide.bgType) slide.bgType = 'color'
-  if(slide.bgType === 'color' && !slide.bgColor) slide.bgColor === '#222222'
+  if (!slide) return
+  if (!slide.fontSize) slide.fontSize = 28
+  if (!slide.color || !/^#([0-9a-fA-F]{6})$/.test(slide.color)) slide.color = '#ffffff'
+  if (!slide.bgType) slide.bgType = 'color'
+  if (slide.bgType === 'color' && !slide.bgColor) slide.bgColor = '#222222'
 },{immediate: true})
 
 function onPickBg(e: Event) {

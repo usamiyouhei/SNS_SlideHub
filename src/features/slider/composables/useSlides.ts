@@ -39,7 +39,7 @@ export const slides = reactive<SlideState>({
 // }
 
 export function addSlide(bgType: 'color'| 'image', options: Partial<Slide> = {}) {
-  slides[mode.value].push({
+  const s : Slide = {
     id:`${ bgType } - ${Date.now()}`,
     bgType,
     bgColor: options.bgColor ?? '#222',
@@ -47,7 +47,14 @@ export function addSlide(bgType: 'color'| 'image', options: Partial<Slide> = {})
     text: options.text ?? '',
     fontSize: options.fontSize ?? 28,
     color: options.color ?? '#fff'
-  })
+  }
+  const arr = slides[mode.value]
+  arr.push(s)
+
+    // ★ 追加直後に新規スライドを選択
+    setSelectedByIndex(arr.length - 1)
+
+    return s
 }
 
 
