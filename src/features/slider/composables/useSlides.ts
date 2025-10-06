@@ -57,6 +57,10 @@ export function addSlide(bgType: 'color'| 'image', options: Partial<Slide> = {})
     return s
 }
 
+export function addBlankColorSlide() {
+    return addSlide('color', { bgColor:'#222', text:'', fontSize:28, color:'#fff' })
+}
+
 
 // i = インデックス番号（0, 1, 2 …）
 // 	s = その配列の要素（Slide オブジェクト）

@@ -16,8 +16,6 @@
           :preventClicksPropagation="false"
           :slideToClickedSlide="true"
           :allowTouchMove="!isEditing"
-          :noSwiping="true"
-          :noSwipingClass="'no-swiping-class'"
           class="w-full h-full"
           @swiper="onSwiper"
           @slideChange="onSlideChange"
@@ -28,9 +26,9 @@
             :key="s.id"
           >
           <!-- 背景：画像（必要なときだけ） -->
-              <div class="relative w-full h-full grid place-items-center"
+              <div class="relative w-full h-full "
                 :style="s.bgType === 'color' ? { background: s.bgColor || '#222'} : undefined"
-                @click="startEdit(i)">
+              >
                   <!-- 画像スライド -->
                   <img v-if="s.bgType === 'image' && s.bgImage"
                     :src="s.bgImage"
@@ -39,7 +37,6 @@
                   >
                 <!-- 編集中：contenteditable（Vueは中身を描かない） -->
                 <div v-if="isEditing && editingIndex === i"
-                  contenteditable="plaintext-only"
                   :ref="el => setEditorRef(el, i)"
                   class="absolute inset-0 grid place-items-center no-swiping-class"
                   :style="{whiteSpace: 'pre-wrap', color:(s.color || '#fff'), fontSize:(s.fontSize || 28) + 'px' }"

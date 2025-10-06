@@ -65,19 +65,22 @@
       <!-- 追加機能 -->
       <div class="rounded-xl border p-4 space-y-4">
         <h4 class="font-medium">新規追加</h4>
+        <button class="px-3 py-2 rounded-lg bg-zinc-600 text-white" @click="onAddBlank">
+          スライドを追加
+        </button>
 
-        <div class="flex flex-wrap items-end gap-3">
+        <!-- <div class="flex flex-wrap items-end gap-3">
           <button class="px-3 py-2 rounded-lg bg-zinc-600 text-white" @click="addColorSlide">色背景で追加</button>
           <button class="px-3 py-2 rounded-lg bg-zinc-900 text-white" @click="triggerPickNewBg">画像背景で追加</button>
           <input ref="newBgInputRef" type="file" accept="image/*" class="sr-only" @change="onPickNewBg">
-        </div>
+        </div> -->
       </div>
   </aside>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { getSelected, addSlide  } from '../composables/useSlides';
+import { getSelected, addBlankColorSlide  } from '../composables/useSlides';
 import type { Slide } from '../types';
 /**===================================================================================================================
  * 
@@ -106,6 +109,10 @@ watch(current, (slide) => {
   if (slide.bgType === 'color' && !slide.bgColor) slide.bgColor = '#222222'
 },{immediate: true})
 
+function onAddBlank() {
+  addBlankColorSlide()
+}
+
 function onPickBg(e: Event) {
   if(!current.value) return
   const file = (e.target as HTMLInputElement).files?.[0];
@@ -132,21 +139,21 @@ function clearBgImage() {
 }
 
 // 新規追加：色 / 画像
-function addColorSlide() {
-  addSlide( 'color',{ text: '', bgColor: '#222', color: '#fff', fontSize: 28})
-}
+// function addColorSlide() {
+//   addSlide( 'color',{ text: '', bgColor: '#222', color: '#fff', fontSize: 28})
+// }
 
 const newBgInputRef = ref<HTMLInputElement | null>(null)
 function triggerPickNewBg(){ newBgInputRef.value?.click()}
 
-function onPickNewBg(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0];
-  (e.target as HTMLInputElement).value = ''
-  if(!file) return
-  const url = URL.createObjectURL(file)
-  addSlide('image', { bgImage: url, text: '', color: '', fontSize: 28 })
+// function onPickNewBg(e: Event) {
+//   const file = (e.target as HTMLInputElement).files?.[0];
+//   (e.target as HTMLInputElement).value = ''
+//   if(!file) return
+//   const url = URL.createObjectURL(file)
+//   addSlide('image', { bgImage: url, text: '', color: '', fontSize: 28 })
 
-}
+// }
 
 // image編集用
 // const imageUrl = ref('')
